@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Care Of Your Mind Health</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Take Care Of Your Mind Health</h1>
+        <p>Un espacio para cuidar tus emociones y tu bienestar</p>
+    </header>
+
+    <nav aria-label="Navegación principal">
+        <button type="button" data-seccion="inicio">Inicio</button>
+        <button type="button" data-seccion="registro">Registro emocional</button>
+        <button type="button" data-seccion="historial">Mi historial</button>
+        <button type="button" data-seccion="actividades">Actividades</button>
+        <button type="button" data-seccion="recursos">Recursos</button>
+    </nav>
+
+    <main>
+        <section id="inicio" class="card welcome">
+            <div class="illustration" aria-hidden="true">🌷</div>
+            <h2>¡Bienvenido a tu espacio de bienestar!</h2>
+            <p>
+                Reconocer tus emociones es un primer paso para conocerte mejor.
+                Dedica unos minutos a pensar cómo te sientes hoy.
+            </p>
+            <button type="button" class="primary" data-seccion="registro">
+                Registrar mi emoción
+            </button>
+        </section>
+
+        <section id="registro" class="card hidden">
+            <h2>¿Cómo te sientes hoy? 💗</h2>
+            <p>Selecciona la emoción que mejor representa tu día.</p>
+
+            <div class="emotions">
+                <button type="button" class="emotion" data-emocion="Feliz">😊 Feliz</button>
+                <button type="button" class="emotion" data-emocion="Tranquila">😌 Tranquila</button>
+                <button type="button" class="emotion" data-emocion="Normal">😐 Normal</button>
+                <button type="button" class="emotion" data-emocion="Triste">😔 Triste</button>
+            </div>
+
+            <form id="formularioRegistro">
+                <label for="comentario">Cuéntame un poco sobre tu día</label>
+                <textarea
+                    id="comentario"
+                    name="comentario"
+                    maxlength="250"
+                    placeholder="Escribe aquí cómo fue tu día..."
+                    required
+                ></textarea>
+
+                <p class="counter" id="contadorCaracteres">0/250</p>
+
+                <button type="submit" class="primary">Guardar registro</button>
+                <div id="mensaje" class="message" role="status" aria-live="polite"></div>
+            </form>
+        </section>
+
+        <section id="historial" class="card hidden">
+            <h2>Mi historial emocional</h2>
+            <p>Aquí puedes consultar los registros que has guardado.</p>
+            <div id="listaHistorial"></div>
+        </section>
+
+        <section id="actividades" class="card hidden">
+            <h2>Actividades para tu bienestar</h2>
+
+            <article class="resource">
+                <h3>Respiración consciente</h3>
+                <p>Busca un lugar tranquilo y dedica unos minutos a respirar lentamente, sin forzarte.</p>
+            </article>
+
+            <article class="resource">
+                <h3>Escribe cómo te sientes</h3>
+                <p>Dedica unos minutos a escribir tus pensamientos y reconocer tus emociones.</p>
+            </article>
+
+            <article class="resource">
+                <h3>Momento de tranquilidad</h3>
+                <p>Realiza una actividad tranquila que disfrutes, como dibujar, leer o escuchar música.</p>
+            </article>
+        </section>
+
+        <section id="recursos" class="card hidden">
+            <h2>Recursos de bienestar</h2>
+
+            <article class="resource">
+                <h3>Videos</h3>
+                <p>Explora videos educativos sobre el reconocimiento de las emociones y el autocuidado.</p>
+            </article>
+
+            <article class="resource">
+                <h3>Artículos</h3>
+                <p>Consulta lecturas sobre bienestar emocional y hábitos saludables.</p>
+            </article>
+
+            <article class="resource">
+                <h3>Consejos diarios</h3>
+                <p>Recuerda hacer pausas, descansar y hablar con alguien de confianza cuando lo necesites.</p>
+            </article>
+        </section>
+    </main>
+
+    <footer>
+        <p>Take Care Of Your Mind Health · Cuida tu bienestar emocional 💗</p>
+    </footer>
+</body>
+</html>
