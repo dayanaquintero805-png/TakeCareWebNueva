@@ -224,3 +224,45 @@ footer {
         padding: 10px 13px;
     }
 }
+
+.respiracion-guia {
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.circulo-respiracion {
+    width: 180px;
+    height: 180px;
+    margin: 20px auto;
+    border-radius: 50%;
+    background: #F2B6CB;
+    color: #8E3A5D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: transform 4s ease-in-out;
+    font-weight: bold;
+}
+
+.circulo-respiracion.respirando {
+    transform: scale(1.15);
+}
+
+.respiracion-guia button,
+#btnGuardarReflexion {
+    margin: 6px;
+}
+
+#reflexionActividad {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 10px 0;
+}
+
+#actividades label {
+    display: block;
+    margin: 10px 0;
+}

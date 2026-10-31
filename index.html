@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Take Care Of Your Mind Health</title>
     <link rel="stylesheet" href="css/estilos.css">
+    <script src="js/validaciones.js" defer></script>
     <script src="js/app.js" defer></script>
 </head>
 <body>
@@ -16,10 +17,13 @@
 
     <nav aria-label="Navegación principal">
         <button type="button" data-seccion="inicio">Inicio</button>
+        <button type="button" data-seccion="registroCuenta">Crear cuenta</button>
+        <button type="button" data-seccion="iniciarSesion">Iniciar sesión</button>
         <button type="button" data-seccion="registro">Registro emocional</button>
         <button type="button" data-seccion="historial">Mi historial</button>
         <button type="button" data-seccion="actividades">Actividades</button>
         <button type="button" data-seccion="recursos">Recursos</button>
+        <button type="button" id="btnCerrarSesion" hidden>Cerrar sesión</button>
     </nav>
 
     <main>
@@ -30,9 +34,75 @@
                 Reconocer tus emociones es un primer paso para conocerte mejor.
                 Dedica unos minutos a pensar cómo te sientes hoy.
             </p>
-            <button type="button" class="primary" data-seccion="registro">
-                Registrar mi emoción
+            <button type="button" class="primary" data-seccion="registroCuenta">
+                Crear mi cuenta
             </button>
+        </section>
+
+        <section id="registroCuenta" class="card hidden">
+            <h2>Crear una cuenta 💗</h2>
+            <p>Completa los datos para registrarte.</p>
+
+            <form id="formularioCuenta">
+                <label for="usuarioRegistro">Nombre de usuario</label>
+                <input
+                    type="text"
+                    id="usuarioRegistro"
+                    name="usuario"
+                    maxlength="100"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="contrasenaRegistro">Contraseña</label>
+                <input
+                    type="password"
+                    id="contrasenaRegistro"
+                    name="contrasena"
+                    minlength="8"
+                    maxlength="72"
+                    autocomplete="new-password"
+                    required
+                >
+
+                <button type="submit" class="primary">Crear cuenta</button>
+                <div id="mensajeCuenta" class="message" role="status" aria-live="polite"></div>
+            </form>
+
+            <p>¿Ya tienes una cuenta?</p>
+            <button type="button" data-seccion="iniciarSesion">
+                Iniciar sesión
+            </button>
+        </section>
+
+        <section id="iniciarSesion" class="card hidden">
+            <h2>Iniciar sesión</h2>
+            <p>Ingresa tus datos para continuar.</p>
+
+            <form id="formularioSesion">
+                <label for="usuarioSesion">Nombre de usuario</label>
+                <input
+                    type="text"
+                    id="usuarioSesion"
+                    name="usuario"
+                    maxlength="100"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="contrasenaSesion">Contraseña</label>
+                <input
+                    type="password"
+                    id="contrasenaSesion"
+                    name="contrasena"
+                    maxlength="72"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button type="submit" class="primary">Iniciar sesión</button>
+                <div id="mensajeSesion" class="message" role="status" aria-live="polite"></div>
+            </form>
         </section>
 
         <section id="registro" class="card hidden">
@@ -69,43 +139,150 @@
             <div id="listaHistorial"></div>
         </section>
 
-        <section id="actividades" class="card hidden">
-            <h2>Actividades para tu bienestar</h2>
 
-            <article class="resource">
-                <h3>Respiración consciente</h3>
-                <p>Busca un lugar tranquilo y dedica unos minutos a respirar lentamente, sin forzarte.</p>
-            </article>
+<section id="actividades" class="card hidden">
+    <h2>Actividades para tu bienestar 💗</h2>
+    <p>Dedica unos minutos a cuidar tus emociones y hacer una pausa durante el día.</p>
 
-            <article class="resource">
-                <h3>Escribe cómo te sientes</h3>
-                <p>Dedica unos minutos a escribir tus pensamientos y reconocer tus emociones.</p>
-            </article>
+    <article class="resource">
+        <h3>Respiración consciente</h3>
+        <p>Sigue el ritmo de la guía. Respira suavemente, sin forzarte.</p>
 
-            <article class="resource">
-                <h3>Momento de tranquilidad</h3>
-                <p>Realiza una actividad tranquila que disfrutes, como dibujar, leer o escuchar música.</p>
-            </article>
-        </section>
+        <div id="guiaRespiracion" class="respiracion-guia">
+            <div id="circuloRespiracion" class="circulo-respiracion">
+                <span id="instruccionRespiracion">¿Empezamos?</span>
+            </div>
+
+            <p id="tiempoFase">Cuando estés preparada, inicia la actividad.</p>
+            <p>Tiempo restante: <strong id="tiempoRestante">60</strong> segundos</p>
+
+            <button type="button" id="btnIniciarRespiracion">
+                Iniciar actividad
+            </button>
+
+            <button type="button" id="btnDetenerRespiracion">
+                Detener
+            </button>
+
+            <p id="mensajeRespiracion" aria-live="polite"></p>
+        </div>
+    </article>
+
+    <article class="resource">
+        <h3>Escribe cómo te sientes</h3>
+        <p>Dedica unos minutos a escribir tus pensamientos y reconocer tus emociones.</p>
+
+        <textarea id="reflexionActividad"
+            maxlength="250"
+            placeholder="¿Cómo te sientes en este momento?"
+            rows="4"></textarea>
+
+       
+<button type="button" id="btnGuardarReflexion">
+    Guardar reflexión
+</button>
+
+<p id="mensajeReflexion" aria-live="polite"></p>
+</article>
+
+<button type="button" id="btnVerReflexiones">
+    Ver mis reflexiones
+</button>
+
+<div id="listaReflexiones" aria-live="polite" hidden>
+    <p>Tus reflexiones guardadas aparecerán aquí.</p>
+</div>
+
+<button type="button" id="btnOcultarReflexiones" hidden>
+    Ocultar mis reflexiones
+</button>
+
+    <article class="resource">
+        <h3>Momento de tranquilidad</h3>
+        <p>Elige una actividad para hacer una pausa y descansar.</p>
+
+        <label>
+            <input type="radio" name="actividadTranquila" value="Dibujar">
+            Dibujar
+        </label>
+
+        <label>
+            <input type="radio" name="actividadTranquila" value="Leer">
+            Leer
+        </label>
+
+        <label>
+            <input type="radio" name="actividadTranquila" value="Escuchar música">
+            Escuchar música
+        </label>
+
+        <p id="mensajeTranquilidad" aria-live="polite"></p>
+    </article>
+</section>
+
 
         <section id="recursos" class="card hidden">
-            <h2>Recursos de bienestar</h2>
+    <h2>Recursos de bienestar 💗</h2>
+    <p>Encuentra información y actividades que pueden ayudarte a cuidar tu bienestar emocional.</p>
 
-            <article class="resource">
-                <h3>Videos</h3>
-                <p>Explora videos educativos sobre el reconocimiento de las emociones y el autocuidado.</p>
-            </article>
+    <article class="resource">
+        <h3>Videos educativos</h3>
+        <p>Aprende sobre las emociones, la relajación y el autocuidado.</p>
 
-            <article class="resource">
-                <h3>Artículos</h3>
-                <p>Consulta lecturas sobre bienestar emocional y hábitos saludables.</p>
-            </article>
+        <h4>1. ¿Qué es la ansiedad?</h4>
+        
+<div class="video-container">
+    <iframe
+        src="https://www.youtube-nocookie.com/embed/mTpuapU6FkI"
+        title="Ansiedad: ¿Qué debes saber? - Hospital Gregorio Marañón"
+        loading="lazy"
+        allowfullscreen>
+    </iframe>
+</div>
 
-            <article class="resource">
-                <h3>Consejos diarios</h3>
-                <p>Recuerda hacer pausas, descansar y hablar con alguien de confianza cuando lo necesites.</p>
-            </article>
-        </section>
+        </div>
+        <p>Conoce ejercicios sencillos de respiración y relajación. <Cite refs={["turn250606youtube15"]} /></p>
+
+        <h4>2. Cómo reconocer nuestras emociones</h4>
+        <p>
+            <a href="https://www.unicef.org/colombia/abraza-tu-mente"
+            target="_blank" rel="noopener noreferrer">
+                Ver recurso educativo de UNICEF Colombia
+            </a>
+        </p>
+        <p>Aprende por qué es importante reconocer las emociones y expresarlas de manera saludable. <Cite refs={["turn250606search2"]} /></p>
+    </article>
+
+    <article class="resource">
+        <h3>Artículos</h3>
+        <p>Consulta lecturas sobre bienestar emocional y hábitos saludables.</p>
+        <ul>
+            <li>
+                <a href="https://www.unicef.org/parenting/es/salud-mental-bienestar"
+                target="_blank" rel="noopener noreferrer">
+                    Salud mental y bienestar — UNICEF
+                </a>
+            </li>
+            <li>
+                <a href="https://www.unicef.org/colombia/abraza-tu-mente"
+                target="_blank" rel="noopener noreferrer">
+                    Abraza tu mente — UNICEF Colombia
+                </a>
+            </li>
+        </ul>
+    </article>
+
+    <article class="resource">
+        <h3>Consejos diarios</h3>
+        <ul>
+            <li>Haz pausas durante tus actividades.</li>
+            <li>Dedica unos minutos a respirar tranquilamente.</li>
+            <li>Expresa tus emociones con alguien de confianza.</li>
+            <li>Descansa y mantén hábitos saludables.</li>
+        </ul>
+    </article>
+</section>
+
     </main>
 
     <footer>

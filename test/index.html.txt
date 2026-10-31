@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pruebas unitarias - Take Care</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 850px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff0f5;
+            color: #333;
+        }
+
+        h1 {
+            color: #8e3a5d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #c85a83;
+            color: white;
+        }
+
+        .resumen {
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .aprobado {
+            color: green;
+        }
+
+        .fallido {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pruebas unitarias</h1>
+    <p>Proyecto: Take Care Of Your Mind Health</p>
+
+    <div id="resumen" class="resumen">Ejecutando pruebas...</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Prueba</th>
+                <th>Resultado</th>
+            </tr>
+        </thead>
+        <tbody id="resultados"></tbody>
+    </table>
+
+    <script src="../js/validaciones.js"></script>
+    <script src="pruebas.js"></script>
+</body>
+</html>

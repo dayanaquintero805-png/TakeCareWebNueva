@@ -1,0 +1,90 @@
+
+function ejecutarPruebas() {
+    const resultados = [];
+
+    function comprobar(nombre, condicion) {
+        resultados.push({
+            nombre: nombre,
+            aprobado: condicion
+        });
+    }
+
+    comprobar(
+        "Rechaza un estado de ánimo vacío",
+        validarRegistro("", "Hoy fue un buen día") ===
+        "Por favor, selecciona tu estado de ánimo."
+    );
+
+    comprobar(
+        "Rechaza un comentario vacío",
+        validarRegistro("Feliz", "   ") ===
+        "Por favor, escribe un comentario sobre tu día."
+    );
+
+    comprobar(
+        "Acepta un registro válido",
+        validarRegistro("Feliz", "Hoy fue un buen día") === ""
+    );
+
+    comprobar(
+        "Rechaza comentarios de más de 250 caracteres",
+        validarRegistro("Feliz", "a".repeat(251)) ===
+        "El comentario no puede superar los 250 caracteres."
+    );
+
+    comprobar(
+        "Acepta un comentario de 250 caracteres",
+        validarRegistro("Feliz", "a".repeat(250)) === ""
+    );
+
+    const registro = crearRegistro(
+        "Tranquila",
+        "  Hoy me sentí bien  ",
+        "23/10/2026"
+    );
+
+    comprobar(
+        "Crea un registro con fecha y emoción",
+        registro.fecha === "23/10/2026" &&
+        registro.emocion === "Tranquila"
+    );
+
+    comprobar(
+        "Elimina espacios innecesarios del comentario",
+        registro.comentario === "Hoy me sentí bien"
+    );
+
+    return resultados;
+}
+
+const resultados = ejecutarPruebas();
+const aprobadas = resultados.filter(
+    function (prueba) {
+        return prueba.aprobado;
+    }
+).length;
+
+const tabla = document.getElementById("resultados");
+const resumen = document.getElementById("resumen");
+
+resultados.forEach(function (prueba) {
+    const fila = document.createElement("tr");
+    const nombre = document.createElement("td");
+    const resultado = document.createElement("td");
+
+    nombre.textContent = prueba.nombre;
+    resultado.textContent = prueba.aprobado ? "APROBADO" : "FALLIDO";
+    resultado.className = prueba.aprobado ? "aprobado" : "fallido";
+
+    fila.appendChild(nombre);
+    fila.appendChild(resultado);
+    tabla.appendChild(fila);
+});
+
+resumen.textContent =
+    "Resultado: " + aprobadas + " de " +
+    resultados.length + " pruebas aprobadas.";
+
+resumen.className = aprobadas === resultados.length
+    ? "resumen aprobado"
+    : "resumen fallido";
