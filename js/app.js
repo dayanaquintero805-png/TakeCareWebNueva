@@ -1,6 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-    const API_URL = "http://localhost:8080/api";
+    const API_URL = "https://take-care-of-your-mind-health.onrender.com/api";
 
     const secciones = document.querySelectorAll("main section");
     const botonesNavegacion = document.querySelectorAll("[data-seccion]");
