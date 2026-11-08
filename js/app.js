@@ -1,5 +1,8 @@
 
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("Take Care: JavaScript cargado correctamente");
+console.log("Formulario de sesión:", document.getElementById("formularioSesion"));
+
     const API_URL = "https://take-care-of-your-mind-health.onrender.com/api";
 
     const secciones = document.querySelectorAll("main section");
