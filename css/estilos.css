@@ -266,3 +266,488 @@ footer {
     display: block;
     margin: 10px 0;
 }
+
+/* ==========================================
+   SELECTOR PERSONALIZADO DE RECORDATORIOS
+========================================== */
+
+.selector-hora {
+    display: flex;
+    align-items: end;
+    justify-content: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.selector-hora div {
+    display: flex;
+    flex-direction: column;
+    min-width: 85px;
+}
+
+.selector-hora label {
+    margin: 0 0 8px;
+    color: #8e3a5d;
+}
+
+.selector-hora select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #f2b6cb;
+    border-radius: 10px;
+    background: #fff8fb;
+    color: #573344;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.selector-hora select:focus {
+    outline: 2px solid #c85a83;
+    outline-offset: 2px;
+}
+
+.separador-hora {
+    font-size: 25px;
+    font-weight: bold;
+    color: #c85a83;
+    padding-bottom: 8px;
+}
+
+.activar-recordatorio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.activar-recordatorio input {
+    accent-color: #c85a83;
+    width: 18px;
+    height: 18px;
+}
+
+@media (max-width: 450px) {
+    .selector-hora {
+        gap: 8px;
+    }
+
+    .selector-hora div {
+        min-width: 70px;
+        flex: 1;
+    }
+
+    .selector-hora select {
+        font-size: 15px;
+        padding: 10px 6px;
+    }
+}
+
+
+/* ==========================================
+   NUEVO DISEÑO: PERFIL Y AJUSTES
+========================================== */
+
+.encabezado-seccion {
+    margin-bottom: 25px;
+}
+
+.etiqueta-seccion {
+    display: inline-block;
+    color: #c85a83;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+
+.encabezado-seccion h2 {
+    margin: 5px 0;
+    font-size: 27px;
+}
+
+.encabezado-seccion p,
+.texto-ayuda {
+    color: #856878;
+    font-size: 14px;
+}
+
+.perfil-presentacion {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #fff0f5, #fce4ed);
+    margin-bottom: 22px;
+}
+
+.avatar-perfil {
+    width: 85px;
+    height: 85px;
+    min-width: 85px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    box-shadow: 0 3px 12px #c85a8322;
+}
+
+.datos-presentacion h3 {
+    margin: 0 0 4px;
+    font-size: 21px;
+}
+
+.datos-presentacion p {
+    margin: 0 0 8px;
+    overflow-wrap: anywhere;
+}
+
+.estado-cuenta {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #39784c;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.punto-activo {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #45a66a;
+}
+
+.panel-perfil,
+.ajuste-tarjeta {
+    background: #fffafd;
+    border: 1px solid #f2d2df;
+    border-radius: 15px;
+    padding: 22px;
+    margin: 18px 0;
+}
+
+.panel-perfil h3,
+.ajuste-tarjeta h3 {
+    margin-top: 0;
+}
+
+.panel-perfil input,
+.ajuste-tarjeta select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #dfb2c3;
+    border-radius: 9px;
+    background: white;
+    color: #573344;
+    font: inherit;
+}
+
+.panel-perfil input:focus,
+.ajuste-tarjeta select:focus {
+    outline: 2px solid #c85a83;
+    outline-offset: 2px;
+}
+
+.panel-perfil input[readonly] {
+    background: #f8edf2;
+    color: #856878;
+    cursor: not-allowed;
+}
+
+.nota-campo {
+    color: #856878;
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+.estadisticas-perfil {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+}
+
+.estadistica {
+    background: #fff0f5;
+    border: 1px solid #f2d2df;
+    border-radius: 13px;
+    padding: 18px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 7px;
+}
+
+.estadistica-icono {
+    font-size: 25px;
+}
+
+.estadistica strong {
+    font-size: 27px;
+    color: #a8426b;
+}
+
+.estadistica span:last-child {
+    font-size: 12px;
+    color: #76566a;
+}
+
+.ultimo-registro {
+    background: white;
+    border-left: 4px solid #c85a83;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.ultimo-registro p {
+    margin-bottom: 0;
+}
+
+.boton-secundario {
+    background: white;
+    color: #a8426b;
+    border: 1px solid #c85a83;
+    border-radius: 9px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.boton-secundario:hover {
+    background: #fff0f5;
+}
+
+.ajuste-titulo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 17px;
+}
+
+.ajuste-titulo h3 {
+    margin: 0 0 4px;
+}
+
+.ajuste-titulo p {
+    color: #856878;
+    margin: 0;
+    font-size: 13px;
+}
+
+.ajuste-icono {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fce4ed;
+    border-radius: 13px;
+    font-size: 24px;
+}
+
+.ajuste-opcion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    border-top: 1px solid #f2d2df;
+    padding: 15px 0;
+}
+
+.ajuste-opcion p {
+    margin: 5px 0 0;
+    color: #856878;
+    font-size: 13px;
+}
+
+.ajuste-opcion button,
+.ajuste-tarjeta > button:not(.boton-secundario) {
+    background: #fce4ed;
+    color: #8e3a5d;
+    border: 1px solid #e9b5ca;
+    border-radius: 9px;
+    padding: 10px 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.ajuste-opcion button:hover,
+.ajuste-tarjeta > button:not(.boton-secundario):hover {
+    background: #f5c9da;
+}
+
+.estado-ajuste {
+    color: #8e3a5d;
+    font-size: 13px;
+    background: #fff0f5;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.informacion-privacidad p,
+.datos-aplicacion p {
+    padding: 9px 0;
+    border-bottom: 1px solid #f5e4eb;
+    font-size: 14px;
+}
+
+.aviso-privacidad {
+    background: #fff0f5;
+    border-radius: 10px;
+    padding: 14px;
+    color: #8e3a5d;
+    font-size: 13px;
+}
+
+#mensajeAjustes {
+    color: #39784c;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+/* Temas de visualización */
+
+body.tema-claro {
+    background: #f4f6fa;
+    color: #303b4b;
+}
+
+body.tema-claro header {
+    background: #657c9b;
+}
+
+body.tema-claro nav {
+    background: #e2e9f2;
+}
+
+body.tema-claro h2,
+body.tema-claro h3 {
+    color: #526b8a;
+}
+
+body.tema-claro .primary {
+    background: #657c9b;
+}
+
+body.tema-oscuro {
+    background: #211d29;
+    color: #f8eaf1;
+}
+
+body.tema-oscuro header {
+    background: #49364c;
+}
+
+body.tema-oscuro nav {
+    background: #302839;
+}
+
+body.tema-oscuro nav button {
+    background: #493c50;
+    color: #ffe5f0;
+}
+
+body.tema-oscuro .card,
+body.tema-oscuro .panel-perfil,
+body.tema-oscuro .ajuste-tarjeta,
+body.tema-oscuro .resource {
+    background: #302839;
+    color: #f8eaf1;
+    border-color: #655066;
+}
+
+body.tema-oscuro h2,
+body.tema-oscuro h3 {
+    color: #f4b8d0;
+}
+
+body.tema-oscuro p,
+body.tema-oscuro label,
+body.tema-oscuro strong {
+    color: #f8eaf1;
+}
+
+body.tema-oscuro input,
+body.tema-oscuro textarea,
+body.tema-oscuro select {
+    background: #493c50;
+    color: white;
+    border-color: #85647e;
+}
+
+body.tema-oscuro .perfil-presentacion,
+body.tema-oscuro .estadistica,
+body.tema-oscuro .ultimo-registro,
+body.tema-oscuro .aviso-privacidad {
+    background: #493c50;
+    color: white;
+}
+
+body.tema-oscuro footer {
+    color: #f4b8d0;
+}
+
+/* Tamaño del texto */
+
+body.texto-grande {
+    font-size: 18px;
+}
+
+body.texto-muy-grande {
+    font-size: 20px;
+}
+
+body.texto-grande input,
+body.texto-grande select,
+body.texto-grande button,
+body.texto-grande textarea,
+body.texto-muy-grande input,
+body.texto-muy-grande select,
+body.texto-muy-grande button,
+body.texto-muy-grande textarea {
+    font-size: inherit;
+}
+
+/* Adaptación a celulares */
+
+@media (max-width: 500px) {
+
+    .perfil-presentacion {
+        align-items: flex-start;
+        padding: 17px;
+        gap: 13px;
+    }
+
+    .avatar-perfil {
+        width: 65px;
+        height: 65px;
+        min-width: 65px;
+        font-size: 32px;
+    }
+
+    .estadisticas-perfil {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ajuste-opcion {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ajuste-opcion button {
+        width: 100%;
+    }
+
+    .panel-perfil,
+    .ajuste-tarjeta {
+        padding: 16px;
+    }
+}
