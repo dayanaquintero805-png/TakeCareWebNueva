@@ -4,12 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Take Care Of Your Mind Health, un espacio para cuidar tus emociones y bienestar.">
     <title>Take Care Of Your Mind Health</title>
+
     <link rel="stylesheet" href="css/estilos.css">
     <script src="js/Validaciones.js" defer></script>
     <script src="js/app.js" defer></script>
 </head>
+
 <body>
+
     <header>
         <h1>Take Care Of Your Mind Health</h1>
         <p>Un espacio para cuidar tus emociones y tu bienestar</p>
@@ -23,27 +27,40 @@
         <button type="button" data-seccion="historial">Mi historial</button>
         <button type="button" data-seccion="actividades">Actividades</button>
         <button type="button" data-seccion="recursos">Recursos</button>
-        <button type="button" id="btnCerrarSesion" hidden>Cerrar sesión</button>
+        <button type="button" data-seccion="recordatorios">Recordatorios</button>
+        <button type="button" data-seccion="perfil">Mi perfil</button>
+        <button type="button" data-seccion="ajustes">Ajustes</button>
+
+        <button type="button" id="btnCerrarSesion" hidden>
+            Cerrar sesión
+        </button>
     </nav>
 
     <main>
+
+        <!-- INICIO -->
         <section id="inicio" class="card welcome">
             <div class="illustration" aria-hidden="true">🌷</div>
+
             <h2>¡Bienvenido a tu espacio de bienestar!</h2>
+
             <p>
                 Reconocer tus emociones es un primer paso para conocerte mejor.
                 Dedica unos minutos a pensar cómo te sientes hoy.
             </p>
+
             <button type="button" class="primary" data-seccion="registroCuenta">
                 Crear mi cuenta
             </button>
         </section>
 
+        <!-- CREAR CUENTA -->
         <section id="registroCuenta" class="card hidden">
             <h2>Crear una cuenta 💗</h2>
             <p>Completa los datos para registrarte.</p>
 
             <form id="formularioCuenta">
+
                 <label for="usuarioRegistro">Nombre de usuario</label>
                 <input
                     type="text"
@@ -66,20 +83,29 @@
                 >
 
                 <button type="submit" class="primary">Crear cuenta</button>
-                <div id="mensajeCuenta" class="message" role="status" aria-live="polite"></div>
+
+                <div
+                    id="mensajeCuenta"
+                    class="message"
+                    role="status"
+                    aria-live="polite">
+                </div>
             </form>
 
             <p>¿Ya tienes una cuenta?</p>
+
             <button type="button" data-seccion="iniciarSesion">
                 Iniciar sesión
             </button>
         </section>
 
+        <!-- INICIAR SESIÓN -->
         <section id="iniciarSesion" class="card hidden">
             <h2>Iniciar sesión</h2>
             <p>Ingresa tus datos para continuar.</p>
 
             <form id="formularioSesion">
+
                 <label for="usuarioSesion">Nombre de usuario</label>
                 <input
                     type="text"
@@ -101,23 +127,43 @@
                 >
 
                 <button type="submit" class="primary">Iniciar sesión</button>
-                <div id="mensajeSesion" class="message" role="status" aria-live="polite"></div>
+
+                <div
+                    id="mensajeSesion"
+                    class="message"
+                    role="status"
+                    aria-live="polite">
+                </div>
             </form>
         </section>
 
+        <!-- REGISTRO EMOCIONAL -->
         <section id="registro" class="card hidden">
             <h2>¿Cómo te sientes hoy? 💗</h2>
             <p>Selecciona la emoción que mejor representa tu día.</p>
 
             <div class="emotions">
-                <button type="button" class="emotion" data-emocion="Feliz">😊 Feliz</button>
-                <button type="button" class="emotion" data-emocion="Tranquila">😌 Tranquila</button>
-                <button type="button" class="emotion" data-emocion="Normal">😐 Normal</button>
-                <button type="button" class="emotion" data-emocion="Triste">😔 Triste</button>
+                <button type="button" class="emotion" data-emocion="Feliz">
+                    😊 Feliz
+                </button>
+
+                <button type="button" class="emotion" data-emocion="Tranquila">
+                    😌 Tranquila
+                </button>
+
+                <button type="button" class="emotion" data-emocion="Normal">
+                    😐 Normal
+                </button>
+
+                <button type="button" class="emotion" data-emocion="Triste">
+                    😔 Triste
+                </button>
             </div>
 
             <form id="formularioRegistro">
+
                 <label for="comentario">Cuéntame un poco sobre tu día</label>
+
                 <textarea
                     id="comentario"
                     name="comentario"
@@ -128,165 +174,359 @@
 
                 <p class="counter" id="contadorCaracteres">0/250</p>
 
-                <button type="submit" class="primary">Guardar registro</button>
-                <div id="mensaje" class="message" role="status" aria-live="polite"></div>
+                <button type="submit" class="primary">
+                    Guardar registro
+                </button>
+
+                <div
+                    id="mensaje"
+                    class="message"
+                    role="status"
+                    aria-live="polite">
+                </div>
             </form>
         </section>
 
+        <!-- HISTORIAL -->
         <section id="historial" class="card hidden">
             <h2>Mi historial emocional</h2>
-            <p>Aquí puedes consultar los registros que has guardado.</p>
+
+            <p>
+                Aquí puedes consultar los registros que has guardado.
+            </p>
+
             <div id="listaHistorial"></div>
         </section>
 
+        <!-- ACTIVIDADES -->
+        <section id="actividades" class="card hidden">
+            <h2>Actividades para tu bienestar 💗</h2>
 
-<section id="actividades" class="card hidden">
-    <h2>Actividades para tu bienestar 💗</h2>
-    <p>Dedica unos minutos a cuidar tus emociones y hacer una pausa durante el día.</p>
+            <p>
+                Dedica unos minutos a cuidar tus emociones y hacer
+                una pausa durante el día.
+            </p>
 
-    <article class="resource">
-        <h3>Respiración consciente</h3>
-        <p>Sigue el ritmo de la guía. Respira suavemente, sin forzarte.</p>
+            <article class="resource">
+                <h3>Respiración consciente</h3>
 
-        <div id="guiaRespiracion" class="respiracion-guia">
-            <div id="circuloRespiracion" class="circulo-respiracion">
-                <span id="instruccionRespiracion">¿Empezamos?</span>
+                <p>
+                    Sigue el ritmo de la guía. Respira suavemente,
+                    sin forzarte.
+                </p>
+
+                <div id="guiaRespiracion" class="respiracion-guia">
+
+                    <div id="circuloRespiracion" class="circulo-respiracion">
+                        <span id="instruccionRespiracion">
+                            ¿Empezamos?
+                        </span>
+                    </div>
+
+                    <p id="tiempoFase">
+                        Cuando estés preparada, inicia la actividad.
+                    </p>
+
+                    <p>
+                        Tiempo restante:
+                        <strong id="tiempoRestante">60</strong> segundos
+                    </p>
+
+                    <button type="button" id="btnIniciarRespiracion">
+                        Iniciar actividad
+                    </button>
+
+                    <button type="button" id="btnDetenerRespiracion">
+                        Detener
+                    </button>
+
+                    <p id="mensajeRespiracion" aria-live="polite"></p>
+                </div>
+            </article>
+
+            <article class="resource">
+                <h3>Escribe cómo te sientes</h3>
+
+                <p>
+                    Dedica unos minutos a escribir tus pensamientos
+                    y reconocer tus emociones.
+                </p>
+
+                <textarea
+                    id="reflexionActividad"
+                    maxlength="250"
+                    placeholder="¿Cómo te sientes en este momento?"
+                    rows="4">
+                </textarea>
+
+                <button type="button" id="btnGuardarReflexion">
+                    Guardar reflexión
+                </button>
+
+                <p id="mensajeReflexion" aria-live="polite"></p>
+            </article>
+
+            <button type="button" id="btnVerReflexiones">
+                Ver mis reflexiones
+            </button>
+
+            <div id="listaReflexiones" aria-live="polite" hidden>
+                <p>Tus reflexiones guardadas aparecerán aquí.</p>
             </div>
 
-            <p id="tiempoFase">Cuando estés preparada, inicia la actividad.</p>
-            <p>Tiempo restante: <strong id="tiempoRestante">60</strong> segundos</p>
-
-            <button type="button" id="btnIniciarRespiracion">
-                Iniciar actividad
+            <button type="button" id="btnOcultarReflexiones" hidden>
+                Ocultar mis reflexiones
             </button>
 
-            <button type="button" id="btnDetenerRespiracion">
-                Detener
-            </button>
+            <article class="resource">
+                <h3>Momento de tranquilidad</h3>
 
-            <p id="mensajeRespiracion" aria-live="polite"></p>
-        </div>
-    </article>
+                <p>
+                    Elige una actividad para hacer una pausa y descansar.
+                </p>
 
-    <article class="resource">
-        <h3>Escribe cómo te sientes</h3>
-        <p>Dedica unos minutos a escribir tus pensamientos y reconocer tus emociones.</p>
+                <label>
+                    <input
+                        type="radio"
+                        name="actividadTranquila"
+                        value="Dibujar">
+                    Dibujar
+                </label>
 
-        <textarea id="reflexionActividad"
-            maxlength="250"
-            placeholder="¿Cómo te sientes en este momento?"
-            rows="4"></textarea>
+                <label>
+                    <input
+                        type="radio"
+                        name="actividadTranquila"
+                        value="Leer">
+                    Leer
+                </label>
 
-       
-<button type="button" id="btnGuardarReflexion">
-    Guardar reflexión
-</button>
+                <label>
+                    <input
+                        type="radio"
+                        name="actividadTranquila"
+                        value="Escuchar música">
+                    Escuchar música
+                </label>
 
-<p id="mensajeReflexion" aria-live="polite"></p>
-</article>
+                <p id="mensajeTranquilidad" aria-live="polite"></p>
+            </article>
+        </section>
 
-<button type="button" id="btnVerReflexiones">
-    Ver mis reflexiones
-</button>
-
-<div id="listaReflexiones" aria-live="polite" hidden>
-    <p>Tus reflexiones guardadas aparecerán aquí.</p>
-</div>
-
-<button type="button" id="btnOcultarReflexiones" hidden>
-    Ocultar mis reflexiones
-</button>
-
-    <article class="resource">
-        <h3>Momento de tranquilidad</h3>
-        <p>Elige una actividad para hacer una pausa y descansar.</p>
-
-        <label>
-            <input type="radio" name="actividadTranquila" value="Dibujar">
-            Dibujar
-        </label>
-
-        <label>
-            <input type="radio" name="actividadTranquila" value="Leer">
-            Leer
-        </label>
-
-        <label>
-            <input type="radio" name="actividadTranquila" value="Escuchar música">
-            Escuchar música
-        </label>
-
-        <p id="mensajeTranquilidad" aria-live="polite"></p>
-    </article>
-</section>
-
-
+        <!-- RECURSOS -->
         <section id="recursos" class="card hidden">
-    <h2>Recursos de bienestar 💗</h2>
-    <p>Encuentra información y actividades que pueden ayudarte a cuidar tu bienestar emocional.</p>
+            <h2>Recursos de bienestar 💗</h2>
 
-    <article class="resource">
-        <h3>Videos educativos</h3>
-        <p>Aprende sobre las emociones, la relajación y el autocuidado.</p>
+            <p>
+                Encuentra información y actividades que pueden ayudarte
+                a cuidar tu bienestar emocional.
+            </p>
 
-        <h4>1. ¿Qué es la ansiedad?</h4>
-        
-<div class="video-container">
-    <iframe
-        src="https://www.youtube-nocookie.com/embed/mTpuapU6FkI"
-        title="Ansiedad: ¿Qué debes saber? - Hospital Gregorio Marañón"
-        loading="lazy"
-        allowfullscreen>
-    </iframe>
-</div>
+            <article class="resource">
+                <h3>Videos educativos</h3>
 
-        </div>
-        <p>Conoce ejercicios sencillos de respiración y relajación. <Cite refs={["turn250606youtube15"]} /></p>
+                <p>
+                    Aprende sobre las emociones, la relajación
+                    y el autocuidado.
+                </p>
 
-        <h4>2. Cómo reconocer nuestras emociones</h4>
-        <p>
-            <a href="https://www.unicef.org/colombia/abraza-tu-mente"
-            target="_blank" rel="noopener noreferrer">
-                Ver recurso educativo de UNICEF Colombia
-            </a>
-        </p>
-        <p>Aprende por qué es importante reconocer las emociones y expresarlas de manera saludable. <Cite refs={["turn250606search2"]} /></p>
-    </article>
+                <h4>1. ¿Qué es la ansiedad?</h4>
 
-    <article class="resource">
-        <h3>Artículos</h3>
-        <p>Consulta lecturas sobre bienestar emocional y hábitos saludables.</p>
-        <ul>
-            <li>
-                <a href="https://www.unicef.org/parenting/es/salud-mental-bienestar"
-                target="_blank" rel="noopener noreferrer">
-                    Salud mental y bienestar — UNICEF
-                </a>
-            </li>
-            <li>
-                <a href="https://www.unicef.org/colombia/abraza-tu-mente"
-                target="_blank" rel="noopener noreferrer">
-                    Abraza tu mente — UNICEF Colombia
-                </a>
-            </li>
-        </ul>
-    </article>
+                <div class="video-container">
+                    <iframe
+                        src="https://www.youtube-nocookie.com/embed/mTpuapU6FkI"
+                        title="Ansiedad: ¿Qué debes saber?"
+                        loading="lazy"
+                        allowfullscreen>
+                    </iframe>
+                </div>
 
-    <article class="resource">
-        <h3>Consejos diarios</h3>
-        <ul>
-            <li>Haz pausas durante tus actividades.</li>
-            <li>Dedica unos minutos a respirar tranquilamente.</li>
-            <li>Expresa tus emociones con alguien de confianza.</li>
-            <li>Descansa y mantén hábitos saludables.</li>
-        </ul>
-    </article>
-</section>
+                <h4>2. Cómo reconocer nuestras emociones</h4>
+
+                <p>
+                    <a
+                        href="https://www.unicef.org/colombia/abraza-tu-mente"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Ver recurso educativo de UNICEF Colombia
+                    </a>
+                </p>
+            </article>
+
+            <article class="resource">
+                <h3>Artículos</h3>
+
+                <p>
+                    Consulta lecturas sobre bienestar emocional
+                    y hábitos saludables.
+                </p>
+
+                <ul>
+                    <li>
+                        <a
+                            href="https://www.unicef.org/parenting/es/salud-mental-bienestar"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            Salud mental y bienestar — UNICEF
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="https://www.unicef.org/colombia/abraza-tu-mente"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            Abraza tu mente — UNICEF Colombia
+                        </a>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="resource">
+                <h3>Consejos diarios</h3>
+
+                <ul>
+                    <li>Haz pausas durante tus actividades.</li>
+                    <li>Dedica unos minutos a respirar tranquilamente.</li>
+                    <li>Expresa tus emociones con alguien de confianza.</li>
+                    <li>Descansa y mantén hábitos saludables.</li>
+                </ul>
+            </article>
+        </section>
+
+        <!-- RECORDATORIOS -->
+        <section id="recordatorios" class="card hidden">
+            <h2>Mis recordatorios 🔔</h2>
+
+            <p>
+                Organiza un momento del día para recordar la importancia
+                de cuidar tu bienestar emocional.
+            </p>
+
+            <article class="resource">
+                <h3>Recordatorio de registro emocional</h3>
+
+                <label for="horaRecordatorio">
+                    Selecciona una hora:
+                </label>
+
+                <input
+                    type="time"
+                    id="horaRecordatorio"
+                >
+
+                <label for="activarRecordatorio">
+                    <input
+                        type="checkbox"
+                        id="activarRecordatorio">
+                    Activar recordatorio
+                </label>
+
+                <button type="button" id="btnGuardarRecordatorio">
+                    Guardar recordatorio
+                </button>
+
+                <p id="mensajeRecordatorio" aria-live="polite"></p>
+            </article>
+
+            <article class="resource">
+                <h3>Un pequeño consejo</h3>
+
+                <p>
+                    Puedes dedicar unos minutos a reconocer cómo te
+                    sientes y escribir una reflexión sobre tu día.
+                </p>
+            </article>
+        </section>
+
+        <!-- MI PERFIL -->
+        <section id="perfil" class="card hidden">
+            <h2>Mi perfil 💗</h2>
+
+            <p>
+                Aquí puedes consultar la información básica
+                de tu cuenta.
+            </p>
+
+            <article class="resource">
+                <h3>Información de usuario</h3>
+
+                <label for="perfilUsuario">
+                    Nombre de usuario:
+                </label>
+
+                <input
+                    type="text"
+                    id="perfilUsuario"
+                    readonly
+                >
+
+                <p>
+                    Tu cuenta te permite guardar y consultar
+                    tus registros emocionales y reflexiones.
+                </p>
+
+                <p id="mensajePerfil" aria-live="polite"></p>
+            </article>
+        </section>
+
+        <!-- AJUSTES -->
+        <section id="ajustes" class="card hidden">
+            <h2>Ajustes ⚙️</h2>
+
+            <p>
+                Consulta y configura algunas preferencias
+                de la aplicación.
+            </p>
+
+            <article class="resource">
+                <h3>Notificaciones</h3>
+
+                <p>
+                    Puedes permitir las notificaciones del navegador
+                    para recibir avisos cuando la aplicación esté abierta
+                    y el navegador permita mostrarlos.
+                </p>
+
+                <button type="button" id="btnPermitirNotificaciones">
+                    Permitir notificaciones
+                </button>
+
+                <p id="estadoNotificaciones" aria-live="polite"></p>
+            </article>
+
+            <article class="resource">
+                <h3>Privacidad</h3>
+
+                <p>
+                    Evita compartir tu contraseña y utiliza tu cuenta
+                    de manera responsable.
+                </p>
+
+                <p>
+                    Tus registros emocionales contienen información
+                    personal. Utiliza la aplicación en un dispositivo
+                    de confianza y cierra tu sesión cuando termines.
+                </p>
+            </article>
+
+            <article class="resource">
+                <h3>Información de la aplicación</h3>
+
+                <p><strong>Nombre:</strong> Take Care Of Your Mind Health</p>
+                <p><strong>Versión:</strong> 1.0</p>
+                <p><strong>Tipo:</strong> Aplicación web</p>
+            </article>
+        </section>
 
     </main>
 
     <footer>
-        <p>Take Care Of Your Mind Health · Cuida tu bienestar emocional 💗</p>
+        <p>
+            Take Care Of Your Mind Health ·
+            Cuida tu bienestar emocional 💗
+        </p>
     </footer>
+
 </body>
 </html>
