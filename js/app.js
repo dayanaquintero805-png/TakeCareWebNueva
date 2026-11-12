@@ -1,7 +1,12 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+
     console.log("Take Care: JavaScript cargado correctamente");
+
+    // ==========================================
+    // CONFIGURACIÓN GENERAL
+    // ==========================================
 
     // ==========================================
     // CONFIGURACIÓN GENERAL
@@ -9,91 +14,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const API_URL = "https://take-care-of-your-mind-health.onrender.com/api";
 
+    let usuarioActual = "";
+    let emocionSeleccionada = "";
+    let temporizadorRespiracion = null;
+    let temporizadorMensajeSesion = null;
+
     const secciones = document.querySelectorAll("main section");
-    const botonesNavegacion = document.querySelectorAll("[data-seccion]");
-    const botonesEmociones = document.querySelectorAll(".emotion");
 
-    const formularioCuenta = document.getElementById("formularioCuenta");
+    const mensajeSesion = document.getElementById("mensajeSesion");
+    const mensajeRegistro = document.getElementById("mensajeRegistro");
+
+    const formularioCuenta = document.getElementById("formularioRegistro");
     const formularioSesion = document.getElementById("formularioSesion");
-    const formularioRegistro = document.getElementById("formularioRegistro");
+    const formularioEmocional = document.getElementById("formularioEmocional");
 
-    const usuarioRegistro = document.getElementById("usuarioRegistro");
+    const usuarioRegistro = document.getElementById("correoRegistro");
     const contrasenaRegistro = document.getElementById("contrasenaRegistro");
-    const usuarioSesion = document.getElementById("usuarioSesion");
+
+    const usuarioSesion = document.getElementById("correoSesion");
     const contrasenaSesion = document.getElementById("contrasenaSesion");
 
     const comentario = document.getElementById("comentario");
     const contador = document.getElementById("contadorCaracteres");
-    const historial = document.getElementById("listaHistorial");
 
-    const botonCerrarSesion = document.getElementById("btnCerrarSesion");
-
-    const mensaje = document.getElementById("mensaje");
-    const mensajeCuenta = document.getElementById("mensajeCuenta");
-    const mensajeSesion = document.getElementById("mensajeSesion");
-
-    let emocionSeleccionada = "";
-    let usuarioActual = "";
+    const mensajeRegistroEmocional =
+        document.getElementById("mensajeRegistroEmocional");
 
     // ==========================================
-    // NAVEGACIÓN ENTRE SECCIONES
-    // ==========================================
-
-    function mostrarSeccion(id) {
-
-        const seccionesPrivadas = [
-            "registro",
-            "historial",
-            "actividades",
-            "recursos",
-            "recordatorios",
-            "perfil",
-            "ajustes"
-        ];
-
-        if (seccionesPrivadas.includes(id) && !usuarioActual) {
-            alert("Debes iniciar sesión para acceder a esta sección.");
-            id = "inicio";
-        }
-
-        secciones.forEach(function (seccion) {
-            seccion.classList.toggle("hidden", seccion.id !== id);
-        });
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-        if (id === "historial" && usuarioActual) {
-            mostrarHistorial();
-        }
-
-        if (id === "perfil" && usuarioActual) {
-            mostrarPerfil();
-        }
-
-        if (id === "recordatorios" && usuarioActual) {
-            cargarRecordatorio();
-        }
-
-        if (id === "ajustes") {
-            actualizarEstadoNotificaciones();
-        }
-    }
-
-    botonesNavegacion.forEach(function (boton) {
-        boton.addEventListener("click", function () {
-            mostrarSeccion(boton.dataset.seccion);
-        });
-    });
-
-    // ==========================================
-    // MENSAJES
+    // FUNCIONES GENERALES
     // ==========================================
 
     function mostrarMensaje(elemento, texto, tipo) {
-
         if (!elemento) return;
 
         elemento.textContent = texto;
@@ -101,16 +52,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function limpiarMensaje(elemento) {
-
         if (!elemento) return;
 
         elemento.textContent = "";
         elemento.className = "message";
     }
 
-    // ==========================================
-    // CONEXIÓN CON EL SERVIDOR
-    // ==========================================
+    function obtenerFechaActual() {
+        const hoy = new Date();
+        const anio = hoy.getFullYear();
+        const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+        const dia = String(hoy.getDate()).padStart(2, "0");
+
+        return anio + "-" + mes + "-" + dia;
+    }
 
     async function enviarSolicitud(url, datos) {
 
@@ -145,18 +100,128 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (formularioCuenta) {
 
+    // ==========================================
+    // AVISO VISIBLE DE RECORDATORIOS
+    // ==========================================
+
+    function mostrarAvisoRecordatorio(texto) {
+        let aviso = document.getElementById("avisoRecordatorioGlobal");
+
+        if (!aviso) {
+            aviso = document.createElement("div");
+            aviso.id = "avisoRecordatorioGlobal";
+
+            aviso.style.position = "fixed";
+            aviso.style.bottom = "20px";
+            aviso.style.right = "20px";
+            aviso.style.left = "20px";
+            aviso.style.maxWidth = "450px";
+            aviso.style.marginLeft = "auto";
+            aviso.style.padding = "18px";
+            aviso.style.background = "#c85a83";
+            aviso.style.color = "#ffffff";
+            aviso.style.borderRadius = "12px";
+            aviso.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
+            aviso.style.zIndex = "9999";
+            aviso.style.fontWeight = "bold";
+            aviso.style.textAlign = "center";
+
+            document.body.appendChild(aviso);
+        }
+
+        aviso.textContent = texto;
+        aviso.style.display = "block";
+
+        setTimeout(function () {
+            if (aviso) {
+                aviso.style.display = "none";
+            }
+        }, 15000);
+    }
+
+    // ==========================================
+    // NAVEGACIÓN
+    // ==========================================
+
+    function mostrarSeccion(id) {
+
+        if (id === "inicio") {
+            if (temporizadorMensajeSesion !== null) {
+                clearTimeout(temporizadorMensajeSesion);
+                temporizadorMensajeSesion = null;
+            }
+
+            limpiarMensaje(mensajeSesion);
+        }
+
+        const seccionesPrivadas = [
+            "registro",
+            "historial",
+            "actividades",
+            "recursos",
+            "recordatorios",
+            "perfil",
+            "ajustes"
+        ];
+
+        if (seccionesPrivadas.includes(id) && !usuarioActual) {
+            alert("Debes iniciar sesión para acceder a esta sección.");
+            id = "inicio";
+        }
+
+        secciones.forEach(function (seccion) {
+            seccion.classList.toggle("hidden", seccion.id !== id);
+        });
+
+        if (id === "historial" && usuarioActual) {
+            mostrarHistorial();
+            consultarReflexiones();
+        }
+
+        if (id === "perfil" && usuarioActual) {
+            mostrarPerfil();
+        }
+
+        if (id === "recordatorios" && usuarioActual) {
+            cargarRecordatorio();
+        }
+
+        if (id === "ajustes") {
+            cargarPreferencias();
+            actualizarEstadoNotificaciones();
+        }
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+    document.querySelectorAll("[data-seccion]").forEach(function (boton) {
+        boton.addEventListener("click", function () {
+            mostrarSeccion(boton.dataset.seccion);
+        });
+    });
+
+    // ==========================================
+    // CREAR CUENTA
+    // ==========================================
+
+    if (formularioCuenta) {
         formularioCuenta.addEventListener("submit", async function (evento) {
 
             evento.preventDefault();
-            limpiarMensaje(mensajeCuenta);
+            limpiarMensaje(mensajeRegistro);
 
+            const usuario = usuarioRegistro.value.trim();
+            const contrasena = contrasenaRegistro.value;
             const usuario = usuarioRegistro.value.trim();
             const contrasena = contrasenaRegistro.value;
 
             if (!usuario || !contrasena) {
                 mostrarMensaje(
-                    mensajeCuenta,
-                    "Completa el usuario y la contraseña.",
+                    mensajeRegistro,
+                    "Completa el correo electrónico y la contraseña.",
                     "error"
                 );
                 return;
@@ -164,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (contrasena.length < 8 || contrasena.length > 72) {
                 mostrarMensaje(
-                    mensajeCuenta,
+                    mensajeRegistro,
                     "La contraseña debe tener entre 8 y 72 caracteres.",
                     "error"
                 );
@@ -172,27 +237,22 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             try {
-
-                const resultado = await enviarSolicitud(
-                    API_URL + "/auth/registro",
-                    {
-                        usuario: usuario,
-                        contrasena: contrasena
-                    }
-                );
+                await enviarSolicitud(API_URL + "/auth/registro", {
+                    usuario: usuario,
+                    contrasena: contrasena
+                });
 
                 mostrarMensaje(
-                    mensajeCuenta,
-                    resultado.mensaje || "Cuenta creada correctamente.",
+                    mensajeRegistro,
+                    "Cuenta creada correctamente. Ya puedes iniciar sesión.",
                     "success"
                 );
 
                 formularioCuenta.reset();
 
             } catch (error) {
-
                 mostrarMensaje(
-                    mensajeCuenta,
+                    mensajeRegistro,
                     error.message.includes("Failed to fetch")
                         ? "No se pudo conectar con el servidor. Inténtalo nuevamente."
                         : error.message,
@@ -207,7 +267,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================
 
     if (formularioSesion) {
-
         formularioSesion.addEventListener("submit", async function (evento) {
 
             evento.preventDefault();
@@ -215,35 +274,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const usuario = usuarioSesion.value.trim();
             const contrasena = contrasenaSesion.value;
+            const usuario = usuarioSesion.value.trim();
+            const contrasena = contrasenaSesion.value;
 
             if (!usuario || !contrasena) {
                 mostrarMensaje(
                     mensajeSesion,
-                    "Ingresa tu usuario y contraseña.",
+                    "Ingresa tu correo electrónico y contraseña.",
                     "error"
                 );
                 return;
             }
 
-            try {
+            const boton = formularioSesion.querySelector(
+                'button[type="submit"]'
+            );
 
-                const resultado = await enviarSolicitud(
-                    API_URL + "/auth/login",
-                    {
-                        usuario: usuario,
-                        contrasena: contrasena
-                    }
-                );
+            if (boton) {
+                boton.disabled = true;
+                boton.textContent = "Ingresando...";
+            }
+
+            try {
+                await enviarSolicitud(API_URL + "/auth/login", {
+                    usuario: usuario,
+                    contrasena: contrasena
+                });
 
                 usuarioActual = usuario;
 
-                if (botonCerrarSesion) {
-                    botonCerrarSesion.hidden = false;
-                }
-
                 mostrarMensaje(
                     mensajeSesion,
-                    resultado.mensaje || "Inicio de sesión correcto.",
+                    "Autenticación satisfactoria",
                     "success"
                 );
 
@@ -252,10 +314,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 mostrarPerfil();
                 cargarRecordatorio();
 
-                mostrarSeccion("registro");
+                if (temporizadorMensajeSesion !== null) {
+                    clearTimeout(temporizadorMensajeSesion);
+                }
+
+                temporizadorMensajeSesion = setTimeout(function () {
+
+                    limpiarMensaje(mensajeSesion);
+                    temporizadorMensajeSesion = null;
+
+                    mostrarSeccion("registro");
+
+                }, 2000);
 
             } catch (error) {
-
                 mostrarMensaje(
                     mensajeSesion,
                     error.message.includes("Failed to fetch")
@@ -263,6 +335,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         : error.message,
                     "error"
                 );
+
+            } finally {
+                if (boton) {
+                    boton.disabled = false;
+                    boton.textContent = "Iniciar sesión";
+                }
             }
         });
     }
@@ -271,57 +349,63 @@ document.addEventListener("DOMContentLoaded", function () {
     // CERRAR SESIÓN
     // ==========================================
 
+    function cerrarSesion() {
+
+        usuarioActual = "";
+        emocionSeleccionada = "";
+
+        if (temporizadorMensajeSesion !== null) {
+            clearTimeout(temporizadorMensajeSesion);
+            temporizadorMensajeSesion = null;
+        }
+
+        limpiarMensaje(mensajeSesion);
+        limpiarMensaje(mensajeRegistroEmocional);
+
+        if (formularioSesion) {
+            formularioSesion.reset();
+        }
+
+        if (formularioEmocional) {
+            formularioEmocional.reset();
+        }
+
+        if (contador) {
+            contador.textContent = "0/250";
+        }
+
+        mostrarSeccion("inicio");
+    }
+
+    const botonCerrarSesion = document.getElementById("btnCerrarSesion");
+    const btnCerrarSesionPerfil = document.getElementById("btnCerrarSesionPerfil");
+
     if (botonCerrarSesion) {
+        botonCerrarSesion.addEventListener("click", cerrarSesion);
+    }
 
-        botonCerrarSesion.addEventListener("click", function () {
-
-            usuarioActual = "";
-            emocionSeleccionada = "";
-
-            botonCerrarSesion.hidden = true;
-
-            botonesEmociones.forEach(function (boton) {
-                boton.classList.remove("selected");
-            });
-
-            if (formularioRegistro) {
-                formularioRegistro.reset();
-            }
-
-            if (contador) {
-                contador.textContent = "0/250";
-            }
-
-            if (historial) {
-                historial.replaceChildren();
-            }
-
-            mostrarSeccion("inicio");
-
-            mostrarMensaje(
-                mensaje,
-                "Sesión cerrada correctamente.",
-                "success"
-            );
-        });
+    if (btnCerrarSesionPerfil) {
+        btnCerrarSesionPerfil.addEventListener("click", cerrarSesion);
     }
 
     // ==========================================
-    // SELECCIÓN DE EMOCIONES
+    // REGISTRO EMOCIONAL
     // ==========================================
+
+    const emocionSelect = document.getElementById("emocionSeleccionada");
+
+    const botonesEmociones = document.querySelectorAll(".emotion");
 
     botonesEmociones.forEach(function (boton) {
 
         boton.addEventListener("click", function () {
 
-            botonesEmociones.forEach(function (otroBoton) {
-                otroBoton.classList.remove("selected");
+            botonesEmociones.forEach(function (otro) {
+                otro.classList.remove("selected");
             });
 
             boton.classList.add("selected");
             emocionSeleccionada = boton.dataset.emocion;
-
-            limpiarMensaje(mensaje);
         });
     });
 
@@ -329,101 +413,80 @@ document.addEventListener("DOMContentLoaded", function () {
     // FECHA ACTUAL
     // ==========================================
 
-    function obtenerFechaActual() {
-
-        const hoy = new Date();
-
-        const anio = hoy.getFullYear();
-        const mes = String(hoy.getMonth() + 1).padStart(2, "0");
-        const dia = String(hoy.getDate()).padStart(2, "0");
-
-        return anio + "-" + mes + "-" + dia;
+    if (emocionSelect) {
+        emocionSelect.addEventListener("change", function () {
+            emocionSeleccionada = emocionSelect.value;
+        });
     }
 
-    // ==========================================
-    // CONTADOR DE CARACTERES
-    // ==========================================
-
     if (comentario && contador) {
-
         comentario.addEventListener("input", function () {
             contador.textContent = comentario.value.length + "/250";
         });
     }
 
-    // ==========================================
-    // GUARDAR REGISTRO EMOCIONAL
-    // ==========================================
-
-    if (formularioRegistro) {
-
-        formularioRegistro.addEventListener("submit", async function (evento) {
+    if (formularioEmocional) {
+        formularioEmocional.addEventListener("submit", async function (evento) {
 
             evento.preventDefault();
-            limpiarMensaje(mensaje);
+            limpiarMensaje(mensajeRegistroEmocional);
 
             if (!usuarioActual) {
-
                 mostrarMensaje(
-                    mensaje,
-                    "Para guardar un registro, primero inicia sesión.",
+                    mensajeRegistroEmocional,
+                    "Debes iniciar sesión para guardar un registro.",
                     "error"
                 );
-
-                mostrarSeccion("iniciarSesion");
+                mostrarSeccion("inicio");
                 return;
             }
 
-            const textoComentario = comentario.value.trim();
+            const emocion = emocionSelect
+                ? emocionSelect.value
+                : emocionSeleccionada;
 
-            const errorValidacion = validarRegistro(
-                emocionSeleccionada,
-                textoComentario
-            );
+            const textoComentario = comentario
+                ? comentario.value.trim()
+                : "";
 
-            if (errorValidacion) {
-                mostrarMensaje(mensaje, errorValidacion, "error");
+            if (!emocion || !textoComentario) {
+                mostrarMensaje(
+                    mensajeRegistroEmocional,
+                    "Selecciona una emoción y escribe un comentario.",
+                    "error"
+                );
+                return;
+            }
+
+            if (textoComentario.length > 250) {
+                mostrarMensaje(
+                    mensajeRegistroEmocional,
+                    "El comentario no puede superar los 250 caracteres.",
+                    "error"
+                );
                 return;
             }
 
             try {
-
-                const respuesta = await fetch(API_URL + "/registros", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        nombreUsuario: usuarioActual,
-                        fecha: obtenerFechaActual(),
-                        estadoAnimo: emocionSeleccionada,
-                        comentario: textoComentario
-                    })
+                await enviarSolicitud(API_URL + "/registros", {
+                    nombreUsuario: usuarioActual,
+                    fecha: obtenerFechaActual(),
+                    estadoAnimo: emocion,
+                    comentario: textoComentario
                 });
 
-                let resultado = {};
-
-                try {
-                    resultado = await respuesta.json();
-                } catch (error) {
-                    resultado = {};
-                }
-
-                if (!respuesta.ok) {
-                    throw new Error(
-                        resultado.mensaje || "No se pudo guardar el registro."
-                    );
-                }
-
                 mostrarMensaje(
-                    mensaje,
-                    "¡Tu registro emocional se guardó en el servidor!",
+                    mensajeRegistroEmocional,
+                    "¡Tu registro emocional se guardó correctamente!",
                     "success"
                 );
 
-                formularioRegistro.reset();
+                formularioEmocional.reset();
                 emocionSeleccionada = "";
 
+                botonesEmociones.forEach(function (boton) {
+                    boton.classList.remove("selected");
+                });
                 botonesEmociones.forEach(function (boton) {
                     boton.classList.remove("selected");
                 });
@@ -432,15 +495,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     contador.textContent = "0/250";
                 }
 
-                await mostrarHistorial();
-
             } catch (error) {
-
                 mostrarMensaje(
-                    mensaje,
-                    error.message.includes("Failed to fetch")
-                        ? "No se pudo conectar con el servidor. Inténtalo nuevamente."
-                        : error.message,
+                    mensajeRegistroEmocional,
+                    error.message,
                     "error"
                 );
             }
@@ -448,22 +506,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================
-    // CONSULTAR HISTORIAL EMOCIONAL
+    // HISTORIAL EMOCIONAL
     // ==========================================
+
+    const historial = document.getElementById("contenedorRegistros");
 
     async function mostrarHistorial() {
 
-        if (!historial) return;
+        if (!historial || !usuarioActual) return;
 
         historial.replaceChildren();
-
-        if (!usuarioActual) {
-
-            const texto = document.createElement("p");
-            texto.textContent = "Inicia sesión para consultar tu historial.";
-            historial.appendChild(texto);
-            return;
-        }
 
         try {
 
@@ -478,14 +530,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const registros = await respuesta.json();
 
             if (!Array.isArray(registros) || registros.length === 0) {
-
-                const texto = document.createElement("p");
-                texto.textContent = "Todavía no tienes registros emocionales.";
-                historial.appendChild(texto);
+                historial.textContent = "Todavía no tienes registros emocionales.";
                 return;
             }
 
             registros.forEach(function (registro) {
+
 
                 const tarjeta = document.createElement("article");
                 tarjeta.className = "record";
@@ -503,13 +553,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 historial.appendChild(tarjeta);
             });
 
+
         } catch (error) {
+            historial.textContent =
+                "No se pudo cargar el historial. Inténtalo nuevamente.";
 
-            const texto = document.createElement("p");
-            texto.textContent =
-                "No se pudo cargar el historial. Comprueba que el servidor esté funcionando.";
-
-            historial.appendChild(texto);
+            console.error(error);
         }
     }
 
@@ -526,346 +575,258 @@ document.addEventListener("DOMContentLoaded", function () {
     const instruccionRespiracion =
         document.getElementById("instruccionRespiracion");
 
-    const tiempoFase =
-        document.getElementById("tiempoFase");
+    const temporizadorRespiracionTexto =
+        document.getElementById("temporizadorRespiracion");
 
-    const tiempoRestante =
-        document.getElementById("tiempoRestante");
-
-    const circuloRespiracion =
-        document.getElementById("circuloRespiracion");
-
-    const mensajeRespiracion =
-        document.getElementById("mensajeRespiracion");
-
-    let temporizadorRespiracion = null;
-    let tiempoTotalRespiracion = 60;
-    let segundoFase = 0;
+    let segundosRespiracion = 60;
     let faseRespiracion = "inhalar";
+    let segundosFase = 0;
 
-    function detenerRespiracion(texto) {
-
-        if (temporizadorRespiracion !== null) {
-            clearInterval(temporizadorRespiracion);
-            temporizadorRespiracion = null;
-        }
-
-        btnIniciarRespiracion.disabled = false;
-        instruccionRespiracion.textContent = "¿Empezamos?";
-
-        tiempoFase.textContent =
-            "Cuando quieras, puedes volver a intentarlo.";
-
-        circuloRespiracion.classList.remove("respirando");
-        mensajeRespiracion.textContent = texto;
-    }
-
-    function actualizarFaseRespiracion() {
-
-        if (faseRespiracion === "inhalar") {
-
-            instruccionRespiracion.textContent = "Inhala suavemente";
-            tiempoFase.textContent =
-                "Inspira durante 4 segundos, sin forzar.";
-
-            circuloRespiracion.classList.add("respirando");
-
-        } else {
-
-            instruccionRespiracion.textContent = "Exhala suavemente";
-            tiempoFase.textContent =
-                "Suelta el aire durante 4 segundos.";
-
-            circuloRespiracion.classList.remove("respirando");
-        }
-    }
-
-    if (
-        btnIniciarRespiracion &&
-        btnDetenerRespiracion &&
-        instruccionRespiracion &&
-        tiempoFase &&
-        tiempoRestante &&
-        circuloRespiracion &&
-        mensajeRespiracion
-    ) {
+    if (btnIniciarRespiracion && temporizadorRespiracionTexto) {
 
         btnIniciarRespiracion.addEventListener("click", function () {
 
+
             if (temporizadorRespiracion !== null) return;
 
-            tiempoTotalRespiracion = 60;
-            segundoFase = 0;
+            segundosRespiracion = 60;
+            segundosFase = 0;
             faseRespiracion = "inhalar";
 
-            tiempoRestante.textContent = tiempoTotalRespiracion;
-            mensajeRespiracion.textContent = "";
             btnIniciarRespiracion.disabled = true;
 
-            actualizarFaseRespiracion();
+            temporizadorRespiracionTexto.textContent =
+                "Tiempo restante: 60 segundos";
+
+            if (instruccionRespiracion) {
+                instruccionRespiracion.textContent = "Inhala suavemente";
+            }
 
             temporizadorRespiracion = setInterval(function () {
 
-                tiempoTotalRespiracion--;
-                segundoFase++;
+                segundosRespiracion--;
+                segundosFase++;
 
-                tiempoRestante.textContent = tiempoTotalRespiracion;
+                temporizadorRespiracionTexto.textContent =
+                    "Tiempo restante: " + segundosRespiracion + " segundos";
 
-                if (segundoFase >= 4) {
+                if (segundosFase >= 4) {
 
-                    segundoFase = 0;
+                    segundosFase = 0;
 
                     faseRespiracion =
                         faseRespiracion === "inhalar"
                             ? "exhalar"
                             : "inhalar";
 
-                    actualizarFaseRespiracion();
+                    if (instruccionRespiracion) {
+                        instruccionRespiracion.textContent =
+                            faseRespiracion === "inhalar"
+                                ? "Inhala suavemente"
+                                : "Exhala suavemente";
+                    }
                 }
 
-                if (tiempoTotalRespiracion <= 0) {
+                if (segundosRespiracion <= 0) {
 
-                    detenerRespiracion(
-                        "¡Actividad finalizada! Tómate un momento para notar cómo te sientes."
-                    );
+                    clearInterval(temporizadorRespiracion);
+                    temporizadorRespiracion = null;
 
-                    tiempoRestante.textContent = "0";
-                    instruccionRespiracion.textContent = "¡Muy bien!";
+                    btnIniciarRespiracion.disabled = false;
+                    temporizadorRespiracionTexto.textContent =
+                        "¡Actividad finalizada!";
 
-                    tiempoFase.textContent =
-                        "Has completado el minuto de respiración.";
+                    if (instruccionRespiracion) {
+                        instruccionRespiracion.textContent =
+                            "Has completado el ejercicio.";
+                    }
                 }
 
             }, 1000);
         });
+    }
 
+    if (btnDetenerRespiracion) {
         btnDetenerRespiracion.addEventListener("click", function () {
 
-            detenerRespiracion(
-                "Actividad detenida. Puedes retomarla cuando quieras."
-            );
+            if (temporizadorRespiracion !== null) {
+                clearInterval(temporizadorRespiracion);
+                temporizadorRespiracion = null;
+            }
 
-            tiempoTotalRespiracion = 60;
-            tiempoRestante.textContent = "60";
+            if (btnIniciarRespiracion) {
+                btnIniciarRespiracion.disabled = false;
+            }
+
+            if (temporizadorRespiracionTexto) {
+                temporizadorRespiracionTexto.textContent = "Actividad detenida.";
+            }
+
+            if (instruccionRespiracion) {
+                instruccionRespiracion.textContent =
+                    "Puedes volver a intentarlo cuando quieras.";
+            }
         });
     }
 
     // ==========================================
-    // GUARDAR Y CONSULTAR REFLEXIONES
+    // ACTIVIDADES DE CALMA
     // ==========================================
 
-    const btnGuardarReflexion =
-        document.getElementById("btnGuardarReflexion");
+    const formularioActividad =
+        document.getElementById("formularioActividad");
 
-    const reflexionActividad =
-        document.getElementById("reflexionActividad");
+    const mensajeActividad =
+        document.getElementById("mensajeActividad");
+
+    if (formularioActividad) {
+        formularioActividad.addEventListener("submit", function (evento) {
+
+            evento.preventDefault();
+
+            const seleccion = formularioActividad.querySelector(
+                'input[name="actividadCalma"]:checked'
+            );
+
+            if (!seleccion) {
+                mostrarMensaje(
+                    mensajeActividad,
+                    "Selecciona una actividad.",
+                    "error"
+                );
+                return;
+            }
+
+            mostrarMensaje(
+                mensajeActividad,
+                "Actividad seleccionada: " + seleccion.value,
+                "success"
+            );
+        });
+    }
+
+    // ==========================================
+    // REFLEXIONES
+    // ==========================================
+
+    const formularioReflexion =
+        document.getElementById("formularioReflexion");
+
+    const textoReflexion =
+        document.getElementById("textoReflexion");
 
     const mensajeReflexion =
         document.getElementById("mensajeReflexion");
 
-    const btnVerReflexiones =
-        document.getElementById("btnVerReflexiones");
+    const contenedorReflexiones =
+        document.getElementById("contenedorReflexiones");
 
-    const listaReflexiones =
-        document.getElementById("listaReflexiones");
+    if (formularioReflexion) {
+        formularioReflexion.addEventListener("submit", async function (evento) {
 
-    const btnOcultarReflexiones =
-        document.getElementById("btnOcultarReflexiones");
-
-    if (btnOcultarReflexiones) {
-
-        btnOcultarReflexiones.addEventListener("click", function () {
-
-            listaReflexiones.hidden = true;
-            btnOcultarReflexiones.hidden = true;
-        });
-    }
-
-    if (btnVerReflexiones) {
-
-        btnVerReflexiones.addEventListener("click", async function () {
+            evento.preventDefault();
 
             if (!usuarioActual) {
-
-                listaReflexiones.textContent =
-                    "Debes iniciar sesión para consultar tus reflexiones.";
-
+                mostrarMensaje(
+                    mensajeReflexion,
+                    "Inicia sesión para guardar tu reflexión.",
+                    "error"
+                );
                 return;
             }
 
-            listaReflexiones.hidden = false;
-            btnOcultarReflexiones.hidden = false;
-            btnVerReflexiones.disabled = true;
+            const contenido = textoReflexion.value.trim();
 
-            listaReflexiones.textContent = "Cargando tus reflexiones...";
+            if (!contenido || contenido.length > 500) {
+                mostrarMensaje(
+                    mensajeReflexion,
+                    "Escribe una reflexión de máximo 500 caracteres.",
+                    "error"
+                );
+                return;
+            }
 
             try {
+                await enviarSolicitud(API_URL + "/reflexiones", {
+                    nombreUsuario: usuarioActual,
+                    contenido: contenido
+                });
 
-                const respuesta = await fetch(
-                    API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual)
+                mostrarMensaje(
+                    mensajeReflexion,
+                    "¡Tu reflexión se guardó correctamente!",
+                    "success"
                 );
 
-                if (!respuesta.ok) {
-                    throw new Error("No se pudieron consultar las reflexiones.");
-                }
-
-                const reflexiones = await respuesta.json();
-                listaReflexiones.replaceChildren();
-
-                if (!Array.isArray(reflexiones) || reflexiones.length === 0) {
-
-                    listaReflexiones.textContent =
-                        "Todavía no tienes reflexiones guardadas.";
-
-                    return;
-                }
-
-                reflexiones.forEach(function (reflexion) {
-
-                    const tarjeta = document.createElement("article");
-                    tarjeta.className = "resource";
-
-                    const titulo = document.createElement("h4");
-                    titulo.textContent = "Mi reflexión";
-
-                    const contenido = document.createElement("p");
-                    contenido.textContent = reflexion.contenido;
-
-                    const fecha = document.createElement("small");
-                    fecha.textContent = reflexion.fecha
-                        ? "Fecha: " + new Date(reflexion.fecha).toLocaleString()
-                        : "Fecha no disponible";
-
-                    tarjeta.append(titulo, contenido, fecha);
-                    listaReflexiones.appendChild(tarjeta);
-                });
+                formularioReflexion.reset();
+                consultarReflexiones();
 
             } catch (error) {
-
-                console.error("Error al consultar reflexiones:", error);
-
-                listaReflexiones.textContent =
-                    "No se pudieron cargar las reflexiones. Verifica que el servidor esté funcionando.";
-
-            } finally {
-
-                btnVerReflexiones.disabled = false;
+                mostrarMensaje(mensajeReflexion, error.message, "error");
             }
         });
     }
 
-    if (btnGuardarReflexion) {
+    async function consultarReflexiones() {
 
-        btnGuardarReflexion.addEventListener("click", async function () {
+        if (!usuarioActual || !contenedorReflexiones) return;
 
-            if (!usuarioActual) {
-                mensajeReflexion.textContent =
-                    "Inicia sesión para guardar tu reflexión.";
+        contenedorReflexiones.replaceChildren();
+
+        try {
+            const respuesta = await fetch(
+                API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual)
+            );
+
+            if (!respuesta.ok) {
+                throw new Error("No fue posible consultar las reflexiones.");
+            }
+
+            const reflexiones = await respuesta.json();
+
+            if (!Array.isArray(reflexiones) || reflexiones.length === 0) {
+                contenedorReflexiones.textContent =
+                    "Todavía no tienes reflexiones guardadas.";
                 return;
             }
 
-            const contenido = reflexionActividad.value.trim();
+            reflexiones.forEach(function (reflexion) {
 
-            if (!contenido) {
-                mensajeReflexion.textContent =
-                    "Escribe una reflexión antes de continuar.";
-                return;
-            }
+                const tarjeta = document.createElement("article");
+                tarjeta.className = "resource";
 
-            if (contenido.length > 250) {
-                mensajeReflexion.textContent =
-                    "La reflexión no puede superar los 250 caracteres.";
-                return;
-            }
+                const contenido = document.createElement("p");
+                contenido.textContent = reflexion.contenido || "";
 
-            btnGuardarReflexion.disabled = true;
-            mensajeReflexion.textContent = "Guardando reflexión...";
+                const fecha = document.createElement("small");
+                fecha.textContent = reflexion.fecha
+                    ? "Fecha: " + reflexion.fecha
+                    : "";
 
-            try {
+                tarjeta.append(contenido, fecha);
+                contenedorReflexiones.appendChild(tarjeta);
+            });
 
-                const respuesta = await fetch(API_URL + "/reflexiones", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        nombreUsuario: usuarioActual,
-                        contenido: contenido
-                    })
-                });
+        } catch (error) {
+            contenedorReflexiones.textContent =
+                "No se pudieron consultar las reflexiones.";
 
-                let resultado = {};
-
-                try {
-                    resultado = await respuesta.json();
-                } catch (error) {
-                    resultado = {};
-                }
-
-                if (!respuesta.ok) {
-                    throw new Error(
-                        resultado.mensaje || "No se pudo guardar la reflexión."
-                    );
-                }
-
-                mensajeReflexion.textContent =
-                    "¡Tu reflexión se guardó correctamente! 💗";
-
-                reflexionActividad.value = "";
-
-            } catch (error) {
-
-                console.error("Error al guardar la reflexión:", error);
-
-                mensajeReflexion.textContent =
-                    "No se pudo guardar. Verifica que el backend esté funcionando.";
-
-            } finally {
-
-                btnGuardarReflexion.disabled = false;
-            }
-        });
+            console.error(error);
+        }
     }
 
     // ==========================================
-    // MOMENTO DE TRANQUILIDAD
+    // PERFIL
     // ==========================================
 
-    const opcionesTranquilidad = document.querySelectorAll(
-        'input[name="actividadTranquila"]'
-    );
+    const nombrePerfilEditar =
+        document.getElementById("nombrePerfilEditar");
 
-    const mensajeTranquilidad =
-        document.getElementById("mensajeTranquilidad");
-
-    opcionesTranquilidad.forEach(function (opcion) {
-
-        opcion.addEventListener("change", function () {
-
-            mensajeTranquilidad.textContent =
-                "Elegiste: " + opcion.value +
-                ". ¡Reserva unos minutos para disfrutarlo!";
-        });
-    });
-
-    // ==========================================
-    // MI PERFIL
-    // ==========================================
-
-    const perfilUsuario =
-        document.getElementById("perfilUsuario");
-
-    const nombreVisible =
-        document.getElementById("nombreVisible");
+    const nombrePerfil =
+        document.getElementById("nombrePerfil");
 
     const mensajePerfil =
         document.getElementById("mensajePerfil");
-
-    const perfilNombrePresentacion =
-        document.getElementById("perfilNombrePresentacion");
-
-    const perfilUsuarioPresentacion =
-        document.getElementById("perfilUsuarioPresentacion");
 
     const totalRegistros =
         document.getElementById("totalRegistros");
@@ -873,58 +834,78 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalReflexiones =
         document.getElementById("totalReflexiones");
 
-    const ultimoRegistroPerfil =
-        document.getElementById("ultimoRegistroPerfil");
+    const ultimoRegistro =
+        document.getElementById("ultimoRegistro");
 
-    const btnGuardarPerfil =
-        document.getElementById("btnGuardarPerfil");
-
-    const btnActualizarPerfil =
-        document.getElementById("btnActualizarPerfil");
-
-    const btnCerrarSesionPerfil =
-        document.getElementById("btnCerrarSesionPerfil");
-
-    function obtenerClaveNombreVisible() {
-        return "takeCareNombreVisible_" + usuarioActual;
-    }
+    const formularioPerfil =
+        document.getElementById("formularioPerfil");
 
     function mostrarPerfil() {
 
         if (!usuarioActual) return;
 
         const nombreGuardado = localStorage.getItem(
-            obtenerClaveNombreVisible()
+            "takeCareNombreVisible_" + usuarioActual
         );
 
-        const nombre = nombreGuardado || usuarioActual;
+        if (nombrePerfil) {
+            nombrePerfil.textContent = nombreGuardado || usuarioActual;
+        }
 
-        perfilUsuario.value = usuarioActual;
-        nombreVisible.value = nombre;
-
-        perfilNombrePresentacion.textContent = nombre;
-        perfilUsuarioPresentacion.textContent = "@" + usuarioActual;
+        if (nombrePerfilEditar) {
+            nombrePerfilEditar.value = nombreGuardado || usuarioActual;
+        }
 
         consultarEstadisticasPerfil();
+    }
+
+    if (formularioPerfil) {
+        formularioPerfil.addEventListener("submit", function (evento) {
+
+            evento.preventDefault();
+
+            if (!usuarioActual || !nombrePerfilEditar) return;
+
+            const nombre = nombrePerfilEditar.value.trim();
+
+            if (!nombre || nombre.length > 100) {
+                mostrarMensaje(
+                    mensajePerfil,
+                    "Escribe un nombre válido.",
+                    "error"
+                );
+                return;
+            }
+
+            localStorage.setItem(
+                "takeCareNombreVisible_" + usuarioActual,
+                nombre
+            );
+
+            if (nombrePerfil) {
+                nombrePerfil.textContent = nombre;
+            }
+
+            mostrarMensaje(
+                mensajePerfil,
+                "Tu información se guardó correctamente.",
+                "success"
+            );
+        });
     }
 
     async function consultarEstadisticasPerfil() {
 
         if (!usuarioActual) return;
 
-        totalRegistros.textContent = "…";
-        totalReflexiones.textContent = "…";
-        ultimoRegistroPerfil.textContent = "Consultando actividad...";
-
         try {
-
             const respuestas = await Promise.all([
                 fetch(API_URL + "/registros/" + encodeURIComponent(usuarioActual)),
                 fetch(API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual))
             ]);
 
             if (!respuestas[0].ok || !respuestas[1].ok) {
-                throw new Error("No fue posible consultar toda la actividad.");
+                throw new Error("No se pudieron consultar las estadísticas.");
             }
 
             const registros = await respuestas[0].json();
@@ -933,293 +914,167 @@ document.addEventListener("DOMContentLoaded", function () {
             const listaRegistros = Array.isArray(registros) ? registros : [];
             const listaReflexiones = Array.isArray(reflexiones) ? reflexiones : [];
 
-            totalRegistros.textContent = listaRegistros.length;
-            totalReflexiones.textContent = listaReflexiones.length;
+            if (totalRegistros) {
+                totalRegistros.textContent = listaRegistros.length;
+            }
 
-            if (listaRegistros.length > 0) {
+            if (totalReflexiones) {
+                totalReflexiones.textContent = listaReflexiones.length;
+            }
 
-                const ultimo = listaRegistros[0];
-
-                ultimoRegistroPerfil.textContent =
-                    (ultimo.fecha || "Fecha no disponible") +
-                    " · " +
-                    (ultimo.estadoAnimo || "Emoción no disponible");
-
-            } else {
-
-                ultimoRegistroPerfil.textContent =
-                    "Todavía no tienes registros emocionales.";
+            if (ultimoRegistro) {
+                if (listaRegistros.length > 0) {
+                    ultimoRegistro.textContent =
+                        listaRegistros[0].fecha + " · " +
+                        listaRegistros[0].estadoAnimo;
+                } else {
+                    ultimoRegistro.textContent =
+                        "Todavía no tienes registros emocionales.";
+                }
             }
 
         } catch (error) {
+            console.error("Error al consultar el perfil:", error);
 
-            console.error("Error al consultar la actividad del perfil:", error);
+            if (totalRegistros) totalRegistros.textContent = "—";
+            if (totalReflexiones) totalReflexiones.textContent = "—";
 
-            totalRegistros.textContent = "—";
-            totalReflexiones.textContent = "—";
-
-            ultimoRegistroPerfil.textContent =
-                "No se pudo consultar tu actividad. Inténtalo nuevamente.";
+            if (ultimoRegistro) {
+                ultimoRegistro.textContent =
+                    "No se pudo consultar tu actividad.";
+            }
         }
     }
 
-    if (btnGuardarPerfil) {
-
-        btnGuardarPerfil.addEventListener("click", function () {
-
-            if (!usuarioActual) return;
-
-            const nombre = nombreVisible.value.trim();
-
-            if (!nombre) {
-
-                mostrarMensaje(
-                    mensajePerfil,
-                    "Escribe un nombre para mostrar en tu perfil.",
-                    "error"
-                );
-
-                return;
-            }
-
-            if (nombre.length > 60) {
-
-                mostrarMensaje(
-                    mensajePerfil,
-                    "El nombre no puede superar los 60 caracteres.",
-                    "error"
-                );
-
-                return;
-            }
-
-            localStorage.setItem(
-                obtenerClaveNombreVisible(),
-                nombre
-            );
-
-            perfilNombrePresentacion.textContent = nombre;
-
-            mostrarMensaje(
-                mensajePerfil,
-                "Tu nombre para mostrar se guardó correctamente.",
-                "success"
-            );
-        });
-    }
-
-    if (btnActualizarPerfil) {
-
-        btnActualizarPerfil.addEventListener("click", function () {
-            consultarEstadisticasPerfil();
-        });
-    }
-
-    if (btnCerrarSesionPerfil) {
-
-        btnCerrarSesionPerfil.addEventListener("click", function () {
-
-            if (botonCerrarSesion) {
-                botonCerrarSesion.click();
-            }
-        });
-    }
-
     // ==========================================
-    // RECORDATORIOS: SELECTORES DE 12 HORAS
+    // RECORDATORIOS CON FECHA Y HORA
     // ==========================================
+
+    const formularioRecordatorio =
+        document.getElementById("formularioRecordatorio");
+
+    const fechaRecordatorio =
+        document.getElementById("fechaRecordatorio");
 
     const horaRecordatorio =
         document.getElementById("horaRecordatorio");
 
-    const minutoRecordatorio =
-        document.getElementById("minutoRecordatorio");
-
-    const periodoRecordatorio =
-        document.getElementById("periodoRecordatorio");
-
-    const activarRecordatorio =
-        document.getElementById("activarRecordatorio");
-
-    const btnGuardarRecordatorio =
-        document.getElementById("btnGuardarRecordatorio");
+    const recordatorioActivo =
+        document.getElementById("recordatorioActivo");
 
     const mensajeRecordatorio =
         document.getElementById("mensajeRecordatorio");
 
-    const CLAVE_RECORDATORIO = "takeCareRecordatorio_";
-
     function obtenerClaveRecordatorio() {
-        return CLAVE_RECORDATORIO + usuarioActual;
-    }
-
-    // Crear las opciones de horas del 01 al 12.
-    if (horaRecordatorio) {
-
-        for (let hora = 1; hora <= 12; hora++) {
-
-            const opcion = document.createElement("option");
-            opcion.value = String(hora).padStart(2, "0");
-            opcion.textContent = String(hora).padStart(2, "0");
-
-            horaRecordatorio.appendChild(opcion);
-        }
-    }
-
-    // Crear las opciones de minutos del 00 al 59.
-    if (minutoRecordatorio) {
-
-        for (let minuto = 0; minuto <= 59; minuto++) {
-
-            const opcion = document.createElement("option");
-            opcion.value = String(minuto).padStart(2, "0");
-            opcion.textContent = String(minuto).padStart(2, "0");
-
-            minutoRecordatorio.appendChild(opcion);
-        }
-    }
-
-    // Convertir una hora de 12 horas a formato de 24 horas.
-    function convertirAFormato24(hora, minuto, periodo) {
-
-        let horaNumero = Number(hora);
-
-        if (periodo === "AM") {
-
-            if (horaNumero === 12) {
-                horaNumero = 0;
-            }
-
-        } else if (periodo === "PM") {
-
-            if (horaNumero !== 12) {
-                horaNumero += 12;
-            }
-        }
-
-        return String(horaNumero).padStart(2, "0") +
-            ":" + minuto;
-    }
-
-    // Mostrar una hora guardada en formato de 24 horas.
-    function cargarHoraEnSelectores(hora24) {
-
-        if (!hora24 || !hora24.includes(":")) return;
-
-        const partes = hora24.split(":");
-
-        let hora = Number(partes[0]);
-        const minuto = partes[1];
-
-        let periodo = "AM";
-
-        if (hora >= 12) {
-            periodo = "PM";
-        }
-
-        hora = hora % 12;
-
-        if (hora === 0) {
-            hora = 12;
-        }
-
-        horaRecordatorio.value = String(hora).padStart(2, "0");
-        minutoRecordatorio.value = minuto;
-        periodoRecordatorio.value = periodo;
+        return "takeCareRecordatorio_" + usuarioActual;
     }
 
     function cargarRecordatorio() {
 
-        if (
-            !usuarioActual ||
-            !horaRecordatorio ||
-            !minutoRecordatorio ||
-            !periodoRecordatorio ||
-            !activarRecordatorio
-        ) {
+        if (!usuarioActual) return;
+
+        if (fechaRecordatorio) {
+            fechaRecordatorio.min = obtenerFechaActual();
+        }
+
+        const guardado = localStorage.getItem(obtenerClaveRecordatorio());
+
+        if (!guardado) {
+
+            if (fechaRecordatorio) fechaRecordatorio.value = "";
+            if (recordatorioActivo) recordatorioActivo.checked = false;
+
+            if (mensajeRecordatorio) {
+                mensajeRecordatorio.textContent =
+                    "Todavía no has configurado un recordatorio.";
+            }
+
             return;
         }
 
-        const guardado = localStorage.getItem(
-            obtenerClaveRecordatorio()
-        );
+        try {
+            const datos = JSON.parse(guardado);
 
-        if (guardado) {
-
-            try {
-
-                const datos = JSON.parse(guardado);
-
-                if (datos.hora) {
-                    cargarHoraEnSelectores(datos.hora);
-                } else {
-                    horaRecordatorio.value = "";
-                    minutoRecordatorio.value = "";
-                    periodoRecordatorio.value = "AM";
-                }
-
-                activarRecordatorio.checked = datos.activo === true;
-
-                mensajeRecordatorio.textContent = datos.activo
-                    ? "Tu recordatorio está activado."
-                    : "Tu recordatorio está desactivado.";
-
-            } catch (error) {
-
-                horaRecordatorio.value = "";
-                minutoRecordatorio.value = "";
-                periodoRecordatorio.value = "AM";
-                activarRecordatorio.checked = false;
-
-                mensajeRecordatorio.textContent =
-                    "No se pudo recuperar la configuración del recordatorio.";
+            if (fechaRecordatorio) {
+                fechaRecordatorio.value = datos.fecha || "";
             }
 
-        } else {
+            if (horaRecordatorio) {
+                horaRecordatorio.value = datos.hora || "08:00";
+            }
 
-            horaRecordatorio.value = "";
-            minutoRecordatorio.value = "";
-            periodoRecordatorio.value = "AM";
-            activarRecordatorio.checked = false;
+            if (recordatorioActivo) {
+                recordatorioActivo.checked = datos.activo === true;
+            }
 
-            mensajeRecordatorio.textContent =
-                "Todavía no has configurado un recordatorio.";
+            if (mensajeRecordatorio) {
+                mensajeRecordatorio.textContent = datos.activo
+                    ? "Recordatorio programado para el " +
+                      datos.fecha + " a las " + datos.hora + "."
+                    : "Tu recordatorio está desactivado.";
+            }
+
+        } catch (error) {
+            console.error("Error al cargar el recordatorio:", error);
+
+            if (mensajeRecordatorio) {
+                mensajeRecordatorio.textContent =
+                    "No se pudo cargar el recordatorio.";
+            }
         }
     }
 
-    if (btnGuardarRecordatorio) {
+    if (formularioRecordatorio) {
+        formularioRecordatorio.addEventListener("submit", function (evento) {
 
-        btnGuardarRecordatorio.addEventListener("click", function () {
+            evento.preventDefault();
 
             if (!usuarioActual) {
-
-                mensajeRecordatorio.textContent =
-                    "Debes iniciar sesión para guardar un recordatorio.";
-
+                mostrarMensaje(
+                    mensajeRecordatorio,
+                    "Debes iniciar sesión para guardar un recordatorio.",
+                    "error"
+                );
                 return;
             }
 
+            const fecha = fechaRecordatorio.value;
             const hora = horaRecordatorio.value;
-            const minuto = minutoRecordatorio.value;
-            const periodo = periodoRecordatorio.value;
+            const activo = recordatorioActivo.checked;
 
-            if (!hora || !minuto || !periodo) {
-
-                mensajeRecordatorio.textContent =
-                    "Selecciona la hora y los minutos de tu recordatorio.";
-
+            if (!fecha || !hora) {
+                mostrarMensaje(
+                    mensajeRecordatorio,
+                    "Selecciona una fecha y una hora.",
+                    "error"
+                );
                 return;
             }
 
-            const hora24 = convertirAFormato24(
-                hora,
-                minuto,
-                periodo
-            );
+            if (fecha < obtenerFechaActual()) {
+                mostrarMensaje(
+                    mensajeRecordatorio,
+                    "La fecha no puede ser anterior al día de hoy.",
+                    "error"
+                );
+                return;
+            }
+
+            const fechaProgramada = new Date(fecha + "T" + hora + ":00");
+
+            if (activo && fechaProgramada.getTime() <= Date.now()) {
+                mostrarMensaje(
+                    mensajeRecordatorio,
+                    "Selecciona una hora futura para activar el recordatorio.",
+                    "error"
+                );
+                return;
+            }
 
             const datos = {
-                hora: hora24,
-                activo: activarRecordatorio.checked
+                fecha: fecha,
+                hora: hora,
+                activo: activo
             };
 
             localStorage.setItem(
@@ -1227,10 +1082,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 JSON.stringify(datos)
             );
 
-            mensajeRecordatorio.textContent = datos.activo
-                ? "¡Tu recordatorio quedó activado correctamente para las " +
-                  hora + ":" + minuto + " " + periodo + "!"
-                : "Tu recordatorio quedó guardado y desactivado.";
+            // Reinicia el control para que el recordatorio nuevo
+            // pueda generar su propio aviso.
+            localStorage.removeItem(
+                "takeCareUltimoAviso_" + usuarioActual
+            );
+
+            mostrarMensaje(
+                mensajeRecordatorio,
+                activo
+                    ? "¡Recordatorio guardado para el " +
+                      fecha + " a las " + hora + "!"
+                    : "El recordatorio quedó guardado, pero está desactivado.",
+                "success"
+            );
         });
     }
 
@@ -1242,92 +1107,83 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!usuarioActual) return;
 
-        const guardado = localStorage.getItem(
-            obtenerClaveRecordatorio()
-        );
+        const guardado = localStorage.getItem(obtenerClaveRecordatorio());
 
         if (!guardado) return;
 
         try {
-
             const datos = JSON.parse(guardado);
 
-            if (!datos.activo || !datos.hora) return;
+            if (!datos.activo || !datos.fecha || !datos.hora) {
+                return;
+            }
 
             const ahora = new Date();
-
-            const horaActual =
-                String(ahora.getHours()).padStart(2, "0") +
-                ":" +
-                String(ahora.getMinutes()).padStart(2, "0");
-
             const fechaActual = obtenerFechaActual();
 
-            // Se utiliza la fecha y la hora programada para
-            // permitir nuevas pruebas en el mismo día.
-            const claveUltimoAviso =
+            const fechaHoraRecordatorio =
+                new Date(datos.fecha + "T" + datos.hora + ":00");
+
+            const claveAviso =
                 "takeCareUltimoAviso_" + usuarioActual;
 
-            const ultimoAviso =
-                localStorage.getItem(claveUltimoAviso);
+            const identificador = datos.fecha + "_" + datos.hora;
 
-            const identificadorAviso =
-                fechaActual + "_" + datos.hora;
+            const ultimoAviso = localStorage.getItem(claveAviso);
 
             if (
-                horaActual === datos.hora &&
-                ultimoAviso !== identificadorAviso
+                ahora.getTime() >= fechaHoraRecordatorio.getTime() &&
+                fechaActual === datos.fecha &&
+                ultimoAviso !== identificador
             ) {
 
-                localStorage.setItem(
-                    claveUltimoAviso,
-                    identificadorAviso
-                );
+                localStorage.setItem(claveAviso, identificador);
+
+                const textoAviso =
+                    "¡Llegó la hora de tu recordatorio! Recuerda registrar cómo te sientes.";
+
+                if (mensajeRecordatorio) {
+                    mensajeRecordatorio.textContent = textoAviso;
+                }
+
+                mostrarAvisoRecordatorio(textoAviso);
 
                 if (
                     "Notification" in window &&
                     Notification.permission === "granted"
                 ) {
-
-                    new Notification("Take Care Of Your Mind Health", {
-                        body: "Tienes un recordatorio de Take Care. 💗"
-                    });
-                }
-
-                if (mensajeRecordatorio) {
-
-                    mensajeRecordatorio.textContent =
-                        "¡Llegó la hora de tu recordatorio! 💗";
+                    try {
+                        new Notification(
+                            "Take Care Of Your Mind Health",
+                            {
+                                body: textoAviso
+                            }
+                        );
+                    } catch (error) {
+                        console.error("No se pudo mostrar la notificación:", error);
+                    }
                 }
             }
 
         } catch (error) {
-
-            console.error(
-                "No se pudo comprobar el recordatorio:",
-                error
-            );
+            console.error("Error al comprobar recordatorios:", error);
         }
     }
 
-    // Revisar la hora cada 15 segundos mientras la página esté abierta.
-    setInterval(comprobarRecordatorios, 15000);
+    setInterval(comprobarRecordatorios, 10000);
 
     // ==========================================
-    // AJUSTES Y NOTIFICACIONES
+    // AJUSTES DE APARIENCIA
     // ==========================================
-
-    const btnPermitirNotificaciones =
-        document.getElementById("btnPermitirNotificaciones");
-
-    const estadoNotificaciones =
-        document.getElementById("estadoNotificaciones");
 
     const temaAplicacion =
         document.getElementById("temaAplicacion");
 
     const tamanoTexto =
         document.getElementById("tamanoTexto");
+
+    const btnGuardarPreferencias =
+        document.getElementById("btnGuardarPreferencias");
 
     const btnRestablecerAjustes =
         document.getElementById("btnRestablecerAjustes");
@@ -1336,18 +1192,11 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("mensajeAjustes");
 
     const CLAVE_TEMA = "takeCareTema";
-    const CLAVE_TAMANO_TEXTO = "takeCareTamanoTexto";
-
-    // ==========================================
-    // APLICAR TEMA
-    // ==========================================
+    const CLAVE_TAMANO = "takeCareTamanoTexto";
 
     function aplicarTema(tema) {
 
-        document.body.classList.remove(
-            "tema-claro",
-            "tema-oscuro"
-        );
+        document.body.classList.remove("tema-claro", "tema-oscuro");
 
         if (tema === "claro") {
             document.body.classList.add("tema-claro");
@@ -1361,10 +1210,6 @@ document.addEventListener("DOMContentLoaded", function () {
             temaAplicacion.value = tema;
         }
     }
-
-    // ==========================================
-    // APLICAR TAMAÑO DE TEXTO
-    // ==========================================
 
     function aplicarTamanoTexto(tamano) {
 
@@ -1386,129 +1231,127 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ==========================================
-    // CARGAR PREFERENCIAS GUARDADAS
-    // ==========================================
-
     function cargarPreferencias() {
 
-        const temaGuardado =
-            localStorage.getItem(CLAVE_TEMA) || "rosa";
+        const tema = localStorage.getItem(CLAVE_TEMA) || "rosa";
+        const tamano = localStorage.getItem(CLAVE_TAMANO) || "normal";
 
-        const tamanoGuardado =
-            localStorage.getItem(CLAVE_TAMANO_TEXTO) || "normal";
-
-        aplicarTema(temaGuardado);
-        aplicarTamanoTexto(tamanoGuardado);
+        aplicarTema(tema);
+        aplicarTamanoTexto(tamano);
     }
 
     if (temaAplicacion) {
-
         temaAplicacion.addEventListener("change", function () {
 
-            localStorage.setItem(CLAVE_TEMA, temaAplicacion.value);
             aplicarTema(temaAplicacion.value);
+
+            if (mensajeAjustes) {
+                mensajeAjustes.textContent =
+                    "Vista previa del tema. Guarda tus preferencias para conservarlo.";
+            }
         });
     }
 
     if (tamanoTexto) {
-
         tamanoTexto.addEventListener("change", function () {
 
-            localStorage.setItem(
-                CLAVE_TAMANO_TEXTO,
-                tamanoTexto.value
-            );
-
             aplicarTamanoTexto(tamanoTexto.value);
+
+            if (mensajeAjustes) {
+                mensajeAjustes.textContent =
+                    "Vista previa del texto. Guarda tus preferencias para conservarlo.";
+            }
+        });
+    }
+
+    if (btnGuardarPreferencias) {
+        btnGuardarPreferencias.addEventListener("click", function () {
+
+            const tema = temaAplicacion ? temaAplicacion.value : "rosa";
+            const tamano = tamanoTexto ? tamanoTexto.value : "normal";
+
+            localStorage.setItem(CLAVE_TEMA, tema);
+            localStorage.setItem(CLAVE_TAMANO, tamano);
+
+            aplicarTema(tema);
+            aplicarTamanoTexto(tamano);
+
+            if (mensajeAjustes) {
+                mensajeAjustes.textContent =
+                    "¡Tus preferencias se guardaron correctamente!";
+            }
+        });
+    }
+
+    if (btnRestablecerAjustes) {
+        btnRestablecerAjustes.addEventListener("click", function () {
+
+            localStorage.removeItem(CLAVE_TEMA);
+            localStorage.removeItem(CLAVE_TAMANO);
+
+            aplicarTema("rosa");
+            aplicarTamanoTexto("normal");
+
+            if (mensajeAjustes) {
+                mensajeAjustes.textContent =
+                    "Los ajustes volvieron a sus valores iniciales.";
+            }
         });
     }
 
     // ==========================================
-    // ESTADO DE NOTIFICACIONES
+    // NOTIFICACIONES DEL NAVEGADOR
     // ==========================================
+
+    const btnPermitirNotificaciones =
+        document.getElementById("btnPermitirNotificaciones");
+
+    const estadoNotificaciones =
+        document.getElementById("estadoNotificaciones");
 
     function actualizarEstadoNotificaciones() {
 
         if (!estadoNotificaciones) return;
 
         if (!("Notification" in window)) {
-
             estadoNotificaciones.textContent =
-                "Este navegador no permite utilizar notificaciones.";
+                "Este navegador no permite notificaciones.";
+            return;
+        }
 
+        if (!window.isSecureContext) {
+            estadoNotificaciones.textContent =
+                "Las notificaciones requieren una conexión HTTPS.";
             return;
         }
 
         if (Notification.permission === "granted") {
-
             estadoNotificaciones.textContent =
-                "Permiso concedido. El navegador puede mostrar notificaciones.";
-
+                "Permiso concedido. Mantén abierta la aplicación para recibir los recordatorios.";
         } else if (Notification.permission === "denied") {
-
             estadoNotificaciones.textContent =
-                "Permiso bloqueado. Revisa los permisos del sitio en tu navegador.";
-
+                "El permiso está bloqueado. Revisa la configuración del navegador.";
         } else {
-
             estadoNotificaciones.textContent =
                 "Todavía no has concedido permiso para recibir notificaciones.";
         }
     }
 
     if (btnPermitirNotificaciones) {
+        btnPermitirNotificaciones.addEventListener("click", async function () {
 
-        btnPermitirNotificaciones.addEventListener(
-            "click",
-            async function () {
-
-                if (!("Notification" in window)) {
-
-                    estadoNotificaciones.textContent =
-                        "Tu navegador no admite notificaciones.";
-
-                    return;
-                }
-
-                try {
-
-                    const permiso =
-                        await Notification.requestPermission();
-
-                    actualizarEstadoNotificaciones();
-
-                    if (permiso === "granted") {
-
-                        estadoNotificaciones.textContent =
-                            "¡Permiso concedido! Recuerda mantener la aplicación abierta para comprobar tus recordatorios.";
-                    }
-
-                } catch (error) {
-
-                    estadoNotificaciones.textContent =
-                        "No fue posible solicitar el permiso de notificaciones.";
-                }
+            if (!("Notification" in window) || !window.isSecureContext) {
+                actualizarEstadoNotificaciones();
+                return;
             }
-        );
-    }
 
-    // ==========================================
-    // RESTABLECER PREFERENCIAS
-    // ==========================================
-
-    if (btnRestablecerAjustes) {
-
-        btnRestablecerAjustes.addEventListener("click", function () {
-
-            localStorage.removeItem(CLAVE_TEMA);
-            localStorage.removeItem(CLAVE_TAMANO_TEXTO);
-
-            aplicarTema("rosa");
-            aplicarTamanoTexto("normal");
-
-            mensajeAjustes.textContent =
-                "Las preferencias de apariencia y lectura volvieron a sus valores originales.";
+            try {
+                await Notification.requestPermission();
+                actualizarEstadoNotificaciones();
+            } catch (error) {
+                console.error("Error en las notificaciones:", error);
+                actualizarEstadoNotificaciones();
+            }
         });
     }
 
@@ -1516,8 +1359,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // INICIAR APLICACIÓN
     // ==========================================
 
+    if (fechaRecordatorio) {
+        fechaRecordatorio.min = obtenerFechaActual();
+    }
+
     cargarPreferencias();
-    mostrarSeccion("inicio");
     actualizarEstadoNotificaciones();
+    mostrarSeccion("inicio");
+
+    console.log("Take Care: módulos inicializados correctamente");
 
 });
