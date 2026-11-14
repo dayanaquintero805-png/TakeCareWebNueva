@@ -155,12 +155,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const usuario = usuarioRegistro.value.trim();
             const contrasena = contrasenaRegistro.value;
+            const correo = document.getElementById("correoRegistro").value.trim();
 
-            if (!usuario || !contrasena) {
+            if (!usuario || !correo || !contrasena) {
 
                 mostrarMensaje(
                     mensajeCuenta,
-                    "Completa el usuario y la contraseña.",
+                    "Completa el usuario, el correo y la contraseña.",
                     "error"
                 );
 
@@ -184,6 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     API_URL + "/auth/registro",
                     {
                         usuario: usuario,
+                        correo: correo,
                         contrasena: contrasena
                     }
                 );
@@ -783,10 +785,10 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
 
                 const respuesta = await fetch(
-                    API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual),
-                    {
-                        credentials: "include"
-                    }
+                    API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual)
+                {
+                    credentials: "include"
+                }
 
                 );
 
