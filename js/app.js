@@ -783,7 +783,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
 
                 const respuesta = await fetch(
-                    API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual)
+                    API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual),
                     {
                         credentials: "include"
                     }
