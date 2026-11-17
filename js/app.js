@@ -16,6 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const formularioCuenta = document.getElementById("formularioCuenta");
     const btnRecuperarContrasena = document.getElementById("btnRecuperarContrasena");
     const formularioSesion = document.getElementById("formularioSesion");
+    const formularioRecuperacion = document.getElementById("formularioRecuperacion");
+    const correoRecuperacion = document.getElementById("correoRecuperacion");
+    const mensajeRecuperacion = document.getElementById("mensajeRecuperacion");
+    const formularioNuevaContrasena = document.getElementById("formularioNuevaContrasena");
+    const parametrosURL = new URLSearchParams(window.location.search);
+    const tokenRecuperacion = parametrosURL.get("token");
+
+if (tokenRecuperacion) {
+    mostrarSeccion("nuevaContrasena");
+}
+
     const formularioRegistro = document.getElementById("formularioRegistro");
 
     const usuarioRegistro = document.getElementById("usuarioRegistro");
@@ -96,6 +107,69 @@ document.addEventListener("DOMContentLoaded", function () {
     btnRecuperarContrasena.addEventListener("click", function () {
         mostrarSeccion("recuperarContrasena");
     });
+
+formularioRecuperacion.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    mensajeRecuperacion.textContent = "Enviando solicitud...";
+
+    try {
+        await enviarSolicitud(
+            `${API_URL}/auth/recuperar`,
+            {
+                correo: correoRecuperacion.value.trim()
+            }
+        );
+
+        mensajeRecuperacion.textContent =
+            "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
+
+        formularioRecuperacion.reset();
+
+    } catch (error) {
+        mensajeRecuperacion.textContent =
+            "No fue posible procesar la solicitud. Inténtalo más tarde.";
+    }
+});
+
+formularioNuevaContrasena.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const contrasena = document.getElementById("contrasenaNueva").value;
+    const confirmar = document.getElementById("confirmarContrasena").value;
+    const mensaje = document.getElementById("mensajeNuevaContrasena");
+
+    if (contrasena !== confirmar) {
+        mensaje.textContent = "Las contraseñas no coinciden.";
+        return;
+    }
+
+    mensaje.textContent = "Actualizando contraseña...";
+
+    try {
+        const resultado = await enviarSolicitud(
+            `${API_URL}/auth/restablecer`,
+            {
+                token: tokenRecuperacion,
+                contrasena: contrasena
+            }
+        );
+
+        mensaje.textContent = resultado.mensaje;
+        formularioNuevaContrasena.reset();
+
+        parametrosURL.delete("token");
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+
+    } catch (error) {
+        mensaje.textContent =
+            "No fue posible actualizar la contraseña. El enlace puede haber expirado.";
+    }
+});
 
 }
 
