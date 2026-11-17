@@ -514,7 +514,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
 
             const respuesta = await fetch(
-                API_URL + "/registros/" + encodeURIComponent(usuarioActual),
+                API_URL + "/registros/" + encodeURIComponent(usuarioActual)
                 {
                     credentials: "include"
                 }
