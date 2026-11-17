@@ -151,7 +151,7 @@
     </button>
 </p>
         </section>
-        
+
 <!-- RECUPERAR CONTRASEÑA -->
 <section id="recuperarContrasena" class="card hidden">
     <h2>Recuperar contraseña 💗</h2>
@@ -190,6 +190,62 @@
     <button type="button" data-seccion="iniciarSesion">
         Volver al inicio de sesión
     </button>
+</section>
+
+
+<!-- ESTABLECER NUEVA CONTRASEÑA -->
+<section id="nuevaContrasena" class="card hidden">
+
+    <h2>Establecer nueva contraseña 💗</h2>
+
+    <p>
+        Escribe tu nueva contraseña y confírmala para recuperar
+        el acceso a tu cuenta.
+    </p>
+
+    <form id="formularioNuevaContrasena">
+
+        <label for="contrasenaNueva">
+            Nueva contraseña
+        </label>
+
+        <input
+            type="password"
+            id="contrasenaNueva"
+            name="contrasena"
+            minlength="8"
+            maxlength="72"
+            autocomplete="new-password"
+            required
+        >
+
+        <label for="confirmarContrasena">
+            Confirmar nueva contraseña
+        </label>
+
+        <input
+            type="password"
+            id="confirmarContrasena"
+            name="confirmarContrasena"
+            minlength="8"
+            maxlength="72"
+            autocomplete="new-password"
+            required
+        >
+
+        <button type="submit" class="primary">
+            Guardar nueva contraseña
+        </button>
+
+        <div
+            id="mensajeNuevaContrasena"
+            class="message"
+            role="status"
+            aria-live="polite">
+        </div>
+
+    </form>
+
 </section>
 
         <!-- REGISTRO EMOCIONAL -->
