@@ -144,7 +144,53 @@
                     aria-live="polite">
                 </div>
             </form>
+           
+            <p>
+    <button type="button" id="btnRecuperarContrasena">
+        ¿Olvidaste tu contraseña?
+    </button>
+</p>
         </section>
+        
+<!-- RECUPERAR CONTRASEÑA -->
+<section id="recuperarContrasena" class="card hidden">
+    <h2>Recuperar contraseña 💗</h2>
+
+    <p>
+        Escribe el correo electrónico asociado a tu cuenta.
+    </p>
+
+    <form id="formularioRecuperacion">
+
+        <label for="correoRecuperacion">
+            Correo electrónico
+        </label>
+
+        <input
+            type="email"
+            id="correoRecuperacion"
+            name="correo"
+            maxlength="150"
+            autocomplete="email"
+            required
+        >
+
+        <button type="submit" class="primary">
+            Enviar solicitud
+        </button>
+
+        <div
+            id="mensajeRecuperacion"
+            class="message"
+            role="status"
+            aria-live="polite">
+        </div>
+    </form>
+
+    <button type="button" data-seccion="iniciarSesion">
+        Volver al inicio de sesión
+    </button>
+</section>
 
         <!-- REGISTRO EMOCIONAL -->
         <section id="registro" class="card hidden">
