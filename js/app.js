@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const botonesEmociones = document.querySelectorAll(".emotion");
 
     const formularioCuenta = document.getElementById("formularioCuenta");
+    const btnRecuperarContrasena = document.getElementById("btnRecuperarContrasena");
     const formularioSesion = document.getElementById("formularioSesion");
     const formularioRegistro = document.getElementById("formularioRegistro");
 
@@ -89,6 +90,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     });
+
+    if (btnRecuperarContrasena) {
+
+    btnRecuperarContrasena.addEventListener("click", function () {
+        mostrarSeccion("recuperarContrasena");
+    });
+
+}
 
     // ==========================================
     // MENSAJES
@@ -505,7 +514,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             texto.textContent =
                 "Inicia sesión para consultar tu historial.";
-
             historial.appendChild(texto);
 
             return;
@@ -513,13 +521,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
 
-            const respuesta = await fetch(
-                API_URL + "/registros/" + encodeURIComponent(usuarioActual),
-                {
-                    credentials: "include"
-                }
-            );
-
+          const respuesta = await fetch(
+              API_URL + "/registros/" + encodeURIComponent(usuarioActual),
+              {
+                credentials: "include"
+              }
+        );
             if (!respuesta.ok) {
                 throw new Error("No fue posible consultar el historial.");
             }
@@ -783,14 +790,14 @@ document.addEventListener("DOMContentLoaded", function () {
             listaReflexiones.textContent = "Cargando tus reflexiones...";
 
             try {
-
-                const respuesta = await fetch(
-                    API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual),
+                
+            const respuesta = await fetch(
+                API_URL + "/reflexiones/" + encodeURIComponent (usuarioActual),
                 {
-                    credentials: "include"
+                credentials: "include"
                 }
+            );
 
-                );
 
                 if (!respuesta.ok) {
 
