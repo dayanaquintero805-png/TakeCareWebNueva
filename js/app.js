@@ -109,7 +109,6 @@ if (tokenRecuperacion) {
     });
 
 formularioRecuperacion.addEventListener("submit", async function (event) {
-    console.log("Se ejecutó el formulario de recuperación");
     event.preventDefault();
 
     mensajeRecuperacion.textContent = "Enviando solicitud...";
