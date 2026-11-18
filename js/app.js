@@ -1,4 +1,3 @@
-javascript
 document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Take Care: JavaScript cargado correctamente");
@@ -1420,4 +1419,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     actualizarEstadoNotificaciones();
 
-});
+}
