@@ -118,30 +118,25 @@ document.addEventListener("DOMContentLoaded", function () {
             mensajeRecuperacion.style.display = "block";
             mensajeRecuperacion.textContent = "Enviando solicitud...";
 
-            try {
-                await enviarSolicitud(
-                    `{API_URL}/auth/recuperar`,)
-                    {
-                        correo: correoRecuperacion.value.trim()
-                    }
-                );
+        try {
+    await enviarSolicitud(
+        `${API_URL}/auth/recuperar`,
+        {
+            correo: correoRecuperacion.value.trim()
+        }
+    );
 
-                mensajeRecuperacion.className = "message success";
-                mensajeRecuperacion.textContent =
-                    "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
+    mensajeRecuperacion.className = "message success";
+    mensajeRecuperacion.textContent =
+        "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
 
-                formularioRecuperacion.reset();
+    formularioRecuperacion.reset();
 
-            } catch (error) {
-                mensajeRecuperacion.className = "message error";
-                mensajeRecuperacion.textContent =
-                    error.message && error.message.includes("Failed to fetch")
-                        ? "No se pudo conectar con el servidor. Inténtalo nuevamente."
-                        : "No fue posible procesar la solicitud. Inténtalo más tarde.";
-            }
-        });
-    }
-
+} catch (error) {
+    mensajeRecuperacion.className = "message error";
+    mensajeRecuperacion.textContent =
+        "No fue posible procesar la solicitud. Inténtalo más tarde.";
+}
     // ==========================================
     // RESTABLECER CONTRASEÑA
     // ==========================================
