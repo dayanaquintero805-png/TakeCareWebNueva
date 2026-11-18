@@ -116,8 +116,10 @@ formularioRecuperacion.addEventListener("submit", async function (event) {
     mensajeRecuperacion.textContent = "Enviando solicitud...";
     mensajeRecuperacion.style.display = "block";
     mensajeRecuperacion.textContent = "Enviando solicitud...";
+    
     09e4eff82e91ad8c4140670fedd12a71177eedf6
 
+    
     try {
         await enviarSolicitud(
             `${API_URL}/auth/recuperar`,
