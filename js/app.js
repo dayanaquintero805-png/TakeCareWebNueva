@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             try {
                 await enviarSolicitud(
-                    `{API_URL}/auth/recuperar`
+                    `{API_URL}/auth/recuperar`,)
                     {
                         correo: correoRecuperacion.value.trim()
                     }
