@@ -121,20 +121,12 @@ formularioRecuperacion.addEventListener("submit", async function (event) {
             }
         );
 
-<<<<<<< HEAD
-        mensajeRecuperacion.className = "message success";
-=======
->>>>>>> 09e4eff82e91ad8c4140670fedd12a71177eedf6
         mensajeRecuperacion.textContent =
             "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
 
         formularioRecuperacion.reset();
 
     } catch (error) {
-<<<<<<< HEAD
-        mensajeRecuperacion.className = "message error";
-=======
->>>>>>> 09e4eff82e91ad8c4140670fedd12a71177eedf6
         mensajeRecuperacion.textContent =
             "No fue posible procesar la solicitud. Inténtalo más tarde.";
     }
