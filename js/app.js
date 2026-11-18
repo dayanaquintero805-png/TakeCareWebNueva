@@ -1418,5 +1418,4 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     actualizarEstadoNotificaciones();
-
-}
+});
