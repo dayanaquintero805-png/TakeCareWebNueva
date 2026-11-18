@@ -1,4 +1,4 @@
-```javascript
+javascript
 document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Take Care: JavaScript cargado correctamente");
