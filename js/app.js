@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
         {
             correo: correoRecuperacion.value.trim()
         }
+    );
     if (formularioRecuperacion) {
 
     formularioRecuperacion.addEventListener("submit", async function (event) {
