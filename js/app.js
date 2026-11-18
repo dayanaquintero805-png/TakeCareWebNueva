@@ -124,19 +124,45 @@ document.addEventListener("DOMContentLoaded", function () {
         {
             correo: correoRecuperacion.value.trim()
         }
-    );
+    if (formularioRecuperacion) {
 
-    mensajeRecuperacion.className = "message success";
-    mensajeRecuperacion.textContent =
-        "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
+    formularioRecuperacion.addEventListener("submit", async function (event) {
 
-    formularioRecuperacion.reset();
+        event.preventDefault();
 
-} catch (error) {
-    mensajeRecuperacion.className = "message error";
-    mensajeRecuperacion.textContent =
-        "No fue posible procesar la solicitud. Inténtalo más tarde.";
+        mensajeRecuperacion.className = "message";
+        mensajeRecuperacion.style.display = "block";
+        mensajeRecuperacion.textContent = "Enviando solicitud...";
+
+        try {
+
+            await enviarSolicitud(
+                `${API_URL}/auth/recuperar`,
+                {
+                    correo: correoRecuperacion.value.trim()
+                }
+            );
+
+            mensajeRecuperacion.className = "message success";
+
+            mensajeRecuperacion.textContent =
+                "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
+
+            formularioRecuperacion.reset();
+
+        } catch (error) {
+
+            mensajeRecuperacion.className = "message error";
+
+            mensajeRecuperacion.textContent =
+                "No fue posible procesar la solicitud. Inténtalo más tarde.";
+
+        }
+
+    });
+
 }
+
     // ==========================================
     // RESTABLECER CONTRASEÑA
     // ==========================================
