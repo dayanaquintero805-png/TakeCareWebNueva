@@ -107,7 +107,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================
 
     if (formularioRecuperacion) {
+
         formularioRecuperacion.addEventListener("submit", async function (event) {
+
             event.preventDefault();
 
             if (!correoRecuperacion || !mensajeRecuperacion) {
@@ -118,51 +120,32 @@ document.addEventListener("DOMContentLoaded", function () {
             mensajeRecuperacion.style.display = "block";
             mensajeRecuperacion.textContent = "Enviando solicitud...";
 
-        try {
-    await enviarSolicitud(
-        `${API_URL}/auth/recuperar`,
-        {
-            correo: correoRecuperacion.value.trim()
-        }
-    );
-    if (formularioRecuperacion) {
+            try {
 
-    formularioRecuperacion.addEventListener("submit", async function (event) {
+                await enviarSolicitud(
+                    `${API_URL}/auth/recuperar`,
+                    {
+                        correo: correoRecuperacion.value.trim()
+                    }
+                );
 
-        event.preventDefault();
+                mensajeRecuperacion.className = "message success";
+                mensajeRecuperacion.textContent =
+                    "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
 
-        mensajeRecuperacion.className = "message";
-        mensajeRecuperacion.style.display = "block";
-        mensajeRecuperacion.textContent = "Enviando solicitud...";
+                formularioRecuperacion.reset();
 
-        try {
+            } catch (error) {
 
-            await enviarSolicitud(
-                `${API_URL}/auth/recuperar`,
-                {
-                    correo: correoRecuperacion.value.trim()
-                }
-            );
+                mensajeRecuperacion.className = "message error";
+                mensajeRecuperacion.textContent =
+                    "No fue posible procesar la solicitud. Inténtalo más tarde.";
 
-            mensajeRecuperacion.className = "message success";
+            }
 
-            mensajeRecuperacion.textContent =
-                "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
+        });
 
-            formularioRecuperacion.reset();
-
-        } catch (error) {
-
-            mensajeRecuperacion.className = "message error";
-
-            mensajeRecuperacion.textContent =
-                "No fue posible procesar la solicitud. Inténtalo más tarde.";
-
-        }
-
-    });
-
-}
+    }
 
     // ==========================================
     // RESTABLECER CONTRASEÑA
