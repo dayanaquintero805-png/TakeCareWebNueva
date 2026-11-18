@@ -111,7 +111,13 @@ if (tokenRecuperacion) {
 formularioRecuperacion.addEventListener("submit", async function (event) {
     event.preventDefault();
 
+
+    mensajeRecuperacion.className = "message";
     mensajeRecuperacion.textContent = "Enviando solicitud...";
+    mensajeRecuperacion.style.display = "block";
+=======
+    mensajeRecuperacion.textContent = "Enviando solicitud...";
+>>>>>>> 09e4eff82e91ad8c4140670fedd12a71177eedf6
 
     try {
         await enviarSolicitud(
@@ -121,12 +127,19 @@ formularioRecuperacion.addEventListener("submit", async function (event) {
             }
         );
 
+
+        mensajeRecuperacion.className = "message success";
+=======
+>>>>>>> 09e4eff82e91ad8c4140670fedd12a71177eedf6
         mensajeRecuperacion.textContent =
             "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
 
         formularioRecuperacion.reset();
 
-    } catch (error) {
+    } catch (error)
+        mensajeRecuperacion.className = "message error";
+=======
+>>>>>>> 09e4eff82e91ad8c4140670fedd12a71177eedf6
         mensajeRecuperacion.textContent =
             "No fue posible procesar la solicitud. Inténtalo más tarde.";
     }
