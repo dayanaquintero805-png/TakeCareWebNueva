@@ -1,3 +1,4 @@
+```javascript
 document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Take Care: JavaScript cargado correctamente");
@@ -10,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const secciones = document.querySelectorAll("main section");
     const botonesNavegacion = document.querySelectorAll("[data-seccion]");
-
     const botonesEmociones = document.querySelectorAll(".emotion");
 
     const formularioCuenta = document.getElementById("formularioCuenta");
@@ -22,10 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const formularioNuevaContrasena = document.getElementById("formularioNuevaContrasena");
     const parametrosURL = new URLSearchParams(window.location.search);
     const tokenRecuperacion = parametrosURL.get("token");
-
-if (tokenRecuperacion) {
-    mostrarSeccion("nuevaContrasena");
-}
 
     const formularioRegistro = document.getElementById("formularioRegistro");
 
@@ -95,97 +91,131 @@ if (tokenRecuperacion) {
     }
 
     botonesNavegacion.forEach(function (boton) {
-
         boton.addEventListener("click", function () {
             mostrarSeccion(boton.dataset.seccion);
         });
-
     });
 
     if (btnRecuperarContrasena) {
+        btnRecuperarContrasena.addEventListener("click", function () {
+            mostrarSeccion("recuperarContrasena");
+        });
+    }
 
-    btnRecuperarContrasena.addEventListener("click", function () {
-        mostrarSeccion("recuperarContrasena");
-    });
+    // ==========================================
+    // RECUPERAR CONTRASEÑA
+    // ==========================================
 
-formularioRecuperacion.addEventListener("submit", async function (event) {
-    event.preventDefault();
+    if (formularioRecuperacion) {
+        formularioRecuperacion.addEventListener("submit", async function (event) {
+            event.preventDefault();
 
-
-    mensajeRecuperacion.className = "message";
-    mensajeRecuperacion.textContent = "Enviando solicitud...";
-    mensajeRecuperacion.style.display = "block";
-    mensajeRecuperacion.textContent = "Enviando solicitud...";
-    
-    09e4eff82e91ad8c4140670fedd12a71177eedf6
-
-    
-    try {
-        await enviarSolicitud(
-            `${API_URL}/auth/recuperar`,
-            {
-                correo: correoRecuperacion.value.trim()
+            if (!correoRecuperacion || !mensajeRecuperacion) {
+                return;
             }
-        );
 
+            mensajeRecuperacion.className = "message";
+            mensajeRecuperacion.style.display = "block";
+            mensajeRecuperacion.textContent = "Enviando solicitud...";
 
-        mensajeRecuperacion.className = "message success";
+            try {
+                await enviarSolicitud(
+                    `${API_URL}/auth/recuperar`,
+                    {
+                        correo: correoRecuperacion.value.trim()
+                    }
+                );
 
-     09e4eff82e91ad8c4140670fedd12a71177eedf6
-        mensajeRecuperacion.textContent =
-            "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
+                mensajeRecuperacion.className = "message success";
+                mensajeRecuperacion.textContent =
+                    "Si el correo está registrado, recibirás instrucciones para recuperar tu contraseña.";
 
-        formularioRecuperacion.reset();
+                formularioRecuperacion.reset();
 
-    } catch (error)
-        mensajeRecuperacion.className = "message error";
-
-        09e4eff82e91ad8c4140670fedd12a71177eedf6
-        mensajeRecuperacion.textContent =
-            "No fue posible procesar la solicitud. Inténtalo más tarde.";
-    }
-});
-
-formularioNuevaContrasena.addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    const contrasena = document.getElementById("contrasenaNueva").value;
-    const confirmar = document.getElementById("confirmarContrasena").value;
-    const mensaje = document.getElementById("mensajeNuevaContrasena");
-
-    if (contrasena !== confirmar) {
-        mensaje.textContent = "Las contraseñas no coinciden.";
-        return;
-    }
-
-    mensaje.textContent = "Actualizando contraseña...";
-
-    try {
-        const resultado = await enviarSolicitud(
-            `${API_URL}/auth/restablecer`,
-            {
-                token: tokenRecuperacion,
-                contrasena: contrasena
+            } catch (error) {
+                mensajeRecuperacion.className = "message error";
+                mensajeRecuperacion.textContent =
+                    error.message && error.message.includes("Failed to fetch")
+                        ? "No se pudo conectar con el servidor. Inténtalo nuevamente."
+                        : "No fue posible procesar la solicitud. Inténtalo más tarde.";
             }
-        );
-
-        mensaje.textContent = resultado.mensaje;
-        formularioNuevaContrasena.reset();
-
-        parametrosURL.delete("token");
-        window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
-        );
-
-    } catch (error) {
-        mensaje.textContent =
-            "No fue posible actualizar la contraseña. El enlace puede haber expirado.";
+        });
     }
-});
 
-}
+    // ==========================================
+    // RESTABLECER CONTRASEÑA
+    // ==========================================
+
+    if (formularioNuevaContrasena) {
+        formularioNuevaContrasena.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const campoContrasena = document.getElementById("contrasenaNueva");
+            const campoConfirmacion = document.getElementById("confirmarContrasena");
+            const mensajeNueva = document.getElementById("mensajeNuevaContrasena");
+
+            if (!campoContrasena || !campoConfirmacion || !mensajeNueva) {
+                return;
+            }
+
+            const contrasena = campoContrasena.value;
+            const confirmar = campoConfirmacion.value;
+
+            mensajeNueva.className = "message";
+            mensajeNueva.style.display = "block";
+
+            if (contrasena !== confirmar) {
+                mensajeNueva.className = "message error";
+                mensajeNueva.textContent = "Las contraseñas no coinciden.";
+                return;
+            }
+
+            if (contrasena.length < 8 || contrasena.length > 72) {
+                mensajeNueva.className = "message error";
+                mensajeNueva.textContent =
+                    "La contraseña debe tener entre 8 y 72 caracteres.";
+                return;
+            }
+
+            if (!tokenRecuperacion) {
+                mensajeNueva.className = "message error";
+                mensajeNueva.textContent =
+                    "El enlace de recuperación no es válido o ya no está disponible.";
+                return;
+            }
+
+            mensajeNueva.textContent = "Actualizando contraseña...";
+
+            try {
+                const resultado = await enviarSolicitud(
+                    `${API_URL}/auth/restablecer`,
+                    {
+                        token: tokenRecuperacion,
+                        contrasena: contrasena
+                    }
+                );
+
+                mensajeNueva.className = "message success";
+                mensajeNueva.textContent =
+                    resultado.mensaje || "Tu contraseña se actualizó correctamente.";
+
+                formularioNuevaContrasena.reset();
+
+                window.history.replaceState(
+                    {},
+                    document.title,
+                    window.location.pathname
+                );
+
+            } catch (error) {
+                mensajeNueva.className = "message error";
+                mensajeNueva.textContent =
+                    error.message && error.message.includes("Failed to fetch")
+                        ? "No se pudo conectar con el servidor. Inténtalo nuevamente."
+                        : (error.message || "No fue posible actualizar la contraseña. El enlace puede haber expirado.");
+            }
+        });
+    }
 
     // ==========================================
     // MENSAJES
@@ -365,7 +395,7 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
 
                 mostrarSeccion("registro");
 
-            } catch (error) {
+                            } catch (error) {
 
                 mostrarMensaje(
                     mensajeSesion,
@@ -586,7 +616,8 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
         });
 
     }
-        // ==========================================
+
+    // ==========================================
     // CONSULTAR HISTORIAL EMOCIONAL
     // ==========================================
 
@@ -602,6 +633,7 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
 
             texto.textContent =
                 "Inicia sesión para consultar tu historial.";
+
             historial.appendChild(texto);
 
             return;
@@ -609,12 +641,13 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
 
         try {
 
-          const respuesta = await fetch(
-              API_URL + "/registros/" + encodeURIComponent(usuarioActual),
-              {
-                credentials: "include"
-              }
-        );
+            const respuesta = await fetch(
+                API_URL + "/registros/" + encodeURIComponent(usuarioActual),
+                {
+                    credentials: "include"
+                }
+            );
+
             if (!respuesta.ok) {
                 throw new Error("No fue posible consultar el historial.");
             }
@@ -714,7 +747,7 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
         tiempoFase.textContent =
             "Cuando quieras, puedes volver a intentarlo.";
 
-        circuloRespiracion.classList.remove("respirando");
+                    circuloRespiracion.classList.remove("respirando");
 
         mensajeRespiracion.textContent = texto;
 
@@ -878,14 +911,13 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
             listaReflexiones.textContent = "Cargando tus reflexiones...";
 
             try {
-                
-            const respuesta = await fetch(
-                API_URL + "/reflexiones/" + encodeURIComponent (usuarioActual),
-                {
-                credentials: "include"
-                }
-            );
 
+                const respuesta = await fetch(
+                    API_URL + "/reflexiones/" + encodeURIComponent(usuarioActual),
+                    {
+                        credentials: "include"
+                    }
+                );
 
                 if (!respuesta.ok) {
 
@@ -994,17 +1026,14 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
                     {
                         method: "POST",
                         credentials: "include",
-                        
+
                         headers: {
                             "Content-Type": "application/json"
                         },
 
                         body: JSON.stringify({
-
                             nombreUsuario: usuarioActual,
-
                             contenido: contenido
-
                         })
                     }
                 );
@@ -1049,7 +1078,8 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
         });
 
     }
-        // ==========================================
+
+    // ==========================================
     // MOMENTO DE TRANQUILIDAD
     // ==========================================
 
@@ -1072,7 +1102,7 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
 
     });
 
-    // ==========================================
+        // ==========================================
     // MI PERFIL
     // ==========================================
 
@@ -1196,11 +1226,8 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
             }
 
             const datos = {
-
                 hora: hora,
-
                 activo: activarRecordatorio.checked
-
             };
 
             localStorage.setItem(
@@ -1261,8 +1288,10 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
                     fechaActual
                 );
 
-                if ("Notification" in window &&
-                    Notification.permission === "granted") {
+                if (
+                    "Notification" in window &&
+                    Notification.permission === "granted"
+                ) {
 
                     new Notification("Take Care Of Your Mind Health", {
                         body: "Tienes un recordatorio de Take Care. 💗"
@@ -1378,7 +1407,11 @@ formularioNuevaContrasena.addEventListener("submit", async function (event) {
     // INICIAR APLICACIÓN
     // ==========================================
 
-    mostrarSeccion("inicio");
+    if (tokenRecuperacion) {
+        mostrarSeccion("nuevaContrasena");
+    } else {
+        mostrarSeccion("inicio");
+    }
 
     actualizarEstadoNotificaciones();
 
